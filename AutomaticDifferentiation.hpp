@@ -1,5 +1,5 @@
-#ifndef DUALNUMBER_HPP_INCLUDED
-#define DUALNUMBER_HPP_INCLUDED
+#ifndef AUTOMATICDIFFERENTIATION_HPP_INCLUDED
+#define AUTOMATICDIFFERENTIATION_HPP_INCLUDED
 
 #include <array>
 #include <memory>
@@ -268,4 +268,4 @@ namespace AutomaticDifferentiation {
     }
 
 }
-#endif // DUALNUMBER_HPP_INCLUDED
+#endif // AUTOMATICDIFFERENTIATION_HPP_INCLUDED
