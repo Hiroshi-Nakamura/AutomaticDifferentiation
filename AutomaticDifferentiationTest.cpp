@@ -38,8 +38,13 @@ int main(int argc, char** argv)
             auto hes=AutomaticDifferentiation::hessian(y);
             const std::array<double,3> val{10.0, 2.0, 5.0};
             std::cout << "y(val)=" << (*y)(val) << std::endl;
-            std::cout << "jac(y)(val)=" << AutomaticDifferentiation::to_string<double,3>(jac(val)) << std::endl;
-            std::cout << "hes(y)(val)=" << AutomaticDifferentiation::to_string<double,3>(hes(val)) << std::endl;
+#ifdef WITHOUT_EIGEN
+            std::cout << "jac(y)(val)=" << std::endl << AutomaticDifferentiation::to_string<double,3>(jac(val)) << std::endl;
+            std::cout << "hes(y)(val)=" << std::endl << AutomaticDifferentiation::to_string<double,3>(hes(val)) << std::endl;
+#else
+            std::cout << "jac(y)(val)=" << std::endl << jac(val) << std::endl;
+            std::cout << "hes(y)(val)=" << std::endl << hes(val) << std::endl;
+#endif // WITHOUT_EIGEN
         }
     }catch(std::string message){
         std::cerr << message << std::endl;

@@ -1,6 +1,9 @@
 #ifndef AUTOMATICDIFFERENTIATION_HPP_INCLUDED
 #define AUTOMATICDIFFERENTIATION_HPP_INCLUDED
 
+#ifndef WITHOUT_EIGEN
+#include <eigen3/Eigen/Core>
+#endif // WITHOUT_EIGEN
 #include <array>
 #include <memory>
 #include <cmath>
@@ -173,6 +176,7 @@ namespace AutomaticDifferentiation {
         std::array<FuncPtr<T,DIM>,DIM> func_ptr;
     public:
         VecFuncPtr(const std::array<FuncPtr<T,DIM>,DIM>& _func_ptr) : func_ptr(_func_ptr) {}
+#ifdef WITHOUT_EIGEN
         virtual std::array<T,DIM> operator()(const std::array<T,DIM>& x) const
         {
             std::array<T,DIM> rtn;
@@ -181,6 +185,16 @@ namespace AutomaticDifferentiation {
             }
             return rtn;
         }
+#else
+        virtual Eigen::Matrix<T,DIM,1> operator()(const std::array<T,DIM>& x) const
+        {
+            Eigen::Matrix<T,DIM,1> rtn;
+            for(size_t i=0; i<DIM; i++){
+                rtn(i,0)=(*func_ptr[i])(x);
+            }
+            return rtn;
+        }
+#endif // WITHOUT_EIGEN
         virtual FuncPtr<T,DIM> operator[](const size_t idx) const
         {
             return func_ptr[idx];
@@ -212,6 +226,7 @@ namespace AutomaticDifferentiation {
         std::array<std::array<FuncPtr<T,DIM>,DIM>,DIM> func_ptr;
     public:
         MatFuncPtr(const std::array<std::array<FuncPtr<T,DIM>,DIM>,DIM>& _func_ptr) : func_ptr(_func_ptr) {}
+#ifdef WITHOUT_EIGEN
         virtual std::array<std::array<T,DIM>,DIM> operator()(const std::array<T,DIM>& x) const
         {
             std::array<std::array<T,DIM>,DIM> rtn;
@@ -222,6 +237,18 @@ namespace AutomaticDifferentiation {
             }
             return rtn;
         }
+#else
+        virtual Eigen::Matrix<T,DIM,DIM> operator()(const std::array<T,DIM>& x) const
+        {
+            Eigen::Matrix<T,DIM,DIM> rtn;
+            for(size_t i=0; i<DIM; i++){
+                for(size_t j=0; j<DIM; j++){
+                    rtn(i,j)=(*func_ptr[i][j])(x);
+                }
+            }
+            return rtn;
+        }
+#endif // WITHOUT_EIGEN
         virtual std::array<FuncPtr<T,DIM>,DIM> operator[](const size_t idx) const
         {
             return func_ptr[idx];
@@ -240,6 +267,7 @@ namespace AutomaticDifferentiation {
         return MatFuncPtr<T,DIM>(rtn);
     }
 
+#ifdef WITHOUT_EIGEN
     ///
     /// utulity-- convert string for display
     ///
@@ -247,7 +275,6 @@ namespace AutomaticDifferentiation {
     std::string to_string(const std::array<T,DIM>& vec)
     {
         std::ostringstream oss;
-        oss << std::endl;
         for(auto e: vec){
             oss << " " << std::setw(8) << e << std::endl;
         }
@@ -258,7 +285,6 @@ namespace AutomaticDifferentiation {
     std::string to_string(const std::array<std::array<T,DIM>,DIM>& mat)
     {
         std::ostringstream oss;
-        oss << std::endl;
         for(auto row: mat){
             for(auto e: row){
                 oss << " " << std::setw(8) << e ;
@@ -267,6 +293,6 @@ namespace AutomaticDifferentiation {
         }
         return oss.str();
     }
-
+#endif // WITHOUT_EIGEN
 }
 #endif // AUTOMATICDIFFERENTIATION_HPP_INCLUDED
