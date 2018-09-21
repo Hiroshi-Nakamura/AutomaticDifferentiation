@@ -3,7 +3,7 @@
 
 template<typename T>
 T f(std::array<T,3> x){
-    return x[0]*x[0]+x[1]+sin(x[2])+1.0;
+    return x[0]*x[0]+x[1]*x[2]+1.0;
 }
 
 int main(int argc, char** argv)
@@ -35,11 +35,11 @@ int main(int argc, char** argv)
         {
             auto y=f(AutomaticDifferentiation::createVariables<double,3>());
             auto jac=AutomaticDifferentiation::jacobian(y);
-            auto hessian=AutomaticDifferentiation::hessian(y);
+            auto hes=AutomaticDifferentiation::hessian(y);
             const std::array<double,3> val{10.0, 2.0, 5.0};
             std::cout << "y(val)=" << (*y)(val) << std::endl;
             std::cout << "jac(y)(val)=" << AutomaticDifferentiation::to_string<double,3>(jac(val)) << std::endl;
-            std::cout << "hessian(y)(val)=" << AutomaticDifferentiation::to_string<double,3>(hessian(val)) << std::endl;
+            std::cout << "hes(y)(val)=" << AutomaticDifferentiation::to_string<double,3>(hes(val)) << std::endl;
         }
     }catch(std::string message){
         std::cerr << message << std::endl;

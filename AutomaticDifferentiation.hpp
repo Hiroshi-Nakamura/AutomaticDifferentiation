@@ -189,6 +189,7 @@ namespace AutomaticDifferentiation {
         {
             return func_ptr;
         }
+
     };
 
     template<typename T, int DIM>
