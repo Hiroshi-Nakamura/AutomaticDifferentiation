@@ -15,7 +15,6 @@
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
 					<Add option="-DWITHOUT_EIGEN__" />
-					<Add directory="/usr/include/eigen3/Eigen" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
