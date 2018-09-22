@@ -30,7 +30,11 @@ namespace AutomaticDifferentiation {
     template<typename T, int DIM>
     class Functor {
     public:
+#ifdef WITHOUT_EIGEN
         virtual T operator()(const std::array<T,DIM>& x) const =0; /// The same usage as a mathmatical function.
+#else
+        virtual T operator()(const Eigen::Matrix<T,DIM,1>& x) const =0; /// The same usage as a mathmatical function.
+#endif // WITHOUT_EIGEN
         virtual std::shared_ptr<Functor<T,DIM>> derivative(size_t idx=0) const =0; /// Get derivative of this Functor. The return is also the derived class of Functor.
     };
 
@@ -43,7 +47,11 @@ namespace AutomaticDifferentiation {
         const T val;
     public:
         Constant(const T& _val) : val(_val) {}
+#ifdef WITHOUT_EIGEN
         virtual T operator()(const std::array<T,DIM>& x) const
+#else
+        virtual T operator()(const Eigen::Matrix<T,DIM,1>& x) const
+#endif // WITHOUT_EIGEN
         {
             return val;
         }
@@ -62,7 +70,11 @@ namespace AutomaticDifferentiation {
         const FuncPtr<T,DIM> right;
     public:
         Operator(FuncType _func_type, const FuncPtr<T,DIM>& _left, const FuncPtr<T,DIM>& _right=nullptr) : func_type(_func_type), left(_left), right(_right) {}
+#ifdef WITHOUT_EIGEN
         virtual T operator()(const std::array<T,DIM>& x) const
+#else
+        virtual T operator()(const Eigen::Matrix<T,DIM,1>& x) const
+#endif // WITHOUT_EIGEN
         {
             switch(func_type){
             case FuncType::SUM:
@@ -123,7 +135,11 @@ namespace AutomaticDifferentiation {
         const size_t index;
     public:
         Variable(const size_t _index) : index(_index) {}
+#ifdef WITHOUT_EIGEN
         virtual T operator()(const std::array<T,DIM>& x) const
+#else
+        virtual T operator()(const Eigen::Matrix<T,DIM,1>& x) const
+#endif // WITHOUT_EIGEN
         {
             return x[index];
         }
@@ -186,7 +202,7 @@ namespace AutomaticDifferentiation {
             return rtn;
         }
 #else
-        virtual Eigen::Matrix<T,DIM,1> operator()(const std::array<T,DIM>& x) const
+        virtual Eigen::Matrix<T,DIM,1> operator()(const Eigen::Matrix<T,DIM,1>& x) const
         {
             Eigen::Matrix<T,DIM,1> rtn;
             for(size_t i=0; i<DIM; i++){
@@ -238,7 +254,7 @@ namespace AutomaticDifferentiation {
             return rtn;
         }
 #else
-        virtual Eigen::Matrix<T,DIM,DIM> operator()(const std::array<T,DIM>& x) const
+        virtual Eigen::Matrix<T,DIM,DIM> operator()(const Eigen::Matrix<T,DIM,1>& x) const
         {
             Eigen::Matrix<T,DIM,DIM> rtn;
             for(size_t i=0; i<DIM; i++){
