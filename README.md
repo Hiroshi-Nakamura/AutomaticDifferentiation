@@ -21,7 +21,7 @@ The derivative of AutomaticDifferentiation::Constant is always AutomaticDifferen
 The derivative of AutomaticDifferentiation::Variable will be AutomaticDifferentiation::Constant(1.0) when derived by itself,
 otherwise (derived by other varable) it will be AutomaticDifferentiation::Constant(0.0).
 The derivative of AutomaticDifferentiation::Operator will be calculated by derivative chain rule.
-For example, in the PRODUCT operator case, it will be **[tex LEFT.derivertive() \dot RIGHT + LEFT \dot RIGHT.derivertive()**.
+For example, in the PRODUCT operator case, it will be **[tex:{LEFT.derivertive() \dot RIGHT + LEFT \dot RIGHT.derivertive()}]**.
 In the hpp code, this calculation is implemented by derivative(), whose argument is index of vector x.
 If you want derivative by the first variable of vector x, type "derivative(0)".
 Note that the output of derivarive() is not a value, but a Functor (exactly a pointer of Functor).
