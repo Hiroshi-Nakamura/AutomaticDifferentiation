@@ -9,9 +9,9 @@ Of course, this AutomaticDifferentiation::Functor has the operator(),
 whose argument is std::array standing for a mathmatical variable vector x.
 AutomaticDifferentiation::Functor derives 3 types, Constant, Variable and Operator.
 These are implemeted by each class.
-AutomaticDifferentiation::Constant operator() always returns a constant value for any x.
-AutomaticDifferentiation::Variable operator() returns a value due to vector x.
-AutomaticDifferentiation::Operator operator() returns a value due to its operation type, sum or product or so on,
+AutomaticDifferentiation::Constant operator(x) always returns a constant value for any x.
+AutomaticDifferentiation::Variable operator(x) returns a value due to vector x.
+AutomaticDifferentiation::Operator operator(x) returns a value due to its operation type, sum or product or so on,
 and due to the operated Functor(s).
 
 The above are the basics of AutomaticDifferentiation::Functor.
