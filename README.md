@@ -22,8 +22,8 @@ otherwise (derived by other varable) it will be AutomaticDifferentiation::Consta
 
 Because of class morphorism, FuncPtr, which is a std::shared_ptr of Functor, is prepared.
 In your source code, you don't use Functor itself but FuncPtr.
-When you want to create Variable, type "AutomaticDifferentiation::FuncPtr<double,2> x0(new AutomaticDifferentiation::Variable<double,2>(0));"
-In the case of Constant, type "AutomaticDifferentiation::FuncPtr<double,2> c(new AutomaticDifferentiation::Constant<double,2>(3.0));"
+When you want to create Variable, type "AutomaticDifferentiation::FuncPtr x0(new AutomaticDifferentiation::Variable(0));"
+In the case of Constant, type "AutomaticDifferentiation::FuncPtr c(new AutomaticDifferentiation::Constant(3.0));"
 The argument of Constructor of Variable and Constant are different, the formar (size_t) means the index of vector x, the latter (usually "double") means the constant value;
 
 "AutomaticDifferentiation.cbp" is a project manage file for Code::Blocks.
