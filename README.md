@@ -1,5 +1,5 @@
 # AutomaticDifferentiation
-Implementation of automatic differentiation by using of Functor class and its operator overload.
+Implementation of automatic differentiation by using of a Functor class and its operator overload.
 You can easily run automatic differentiation program by including "AutomaticDifferentiation.hpp" to your sorce code.
 This library also allows you higher-order automatic differenciation, such as Hessian.
 The sample of usages are shown in "AutomaticDifferentiationTest.cpp".
@@ -7,8 +7,7 @@ The sample of usages are shown in "AutomaticDifferentiationTest.cpp".
 Generally a Functor has an operator().
 Of course, this AutomaticDifferentiation::Functor has the operator(),
 whose argument is std::array standing for a mathmatical variable vector x.
-AutomaticDifferentiation::Functor derives 3 types, Constant, Variable and Operator.
-These are implemeted by each class.
+AutomaticDifferentiation::Functor derives 3 types class, Constant, Variable and Operator.
 AutomaticDifferentiation::Constant operator(x) always returns a constant value for any x.
 AutomaticDifferentiation::Variable operator(x) returns a value due to vector x.
 AutomaticDifferentiation::Operator operator(x) returns a value due to its operation type, sum or product or so on,
