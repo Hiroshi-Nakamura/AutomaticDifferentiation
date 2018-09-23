@@ -4,8 +4,8 @@ You can easily run automatic differentiation program by including "AutomaticDiff
 This library also allows you higher-order automatic differenciation, such as Hessian.
 The sample of usages are shown in "AutomaticDifferentiationTest.cpp".
 
-Generally a Functor has operator().
-Of course, this AutomaticDifferentiation::Functor has operator(),
+Generally a Functor has an operator().
+Of course, this AutomaticDifferentiation::Functor has an operator(),
 whose argument is std::array<T,DIM> standing for a mathmatical variable vector x.
 AutomaticDifferentiation::Functor derives 3 types, Constant, Variable and Operator.
 These are implemeted by each class.
