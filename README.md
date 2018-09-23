@@ -36,6 +36,5 @@ Usually the Operator is not created explicitly,
 but by typing the equation, i.e. "AutomaticDifferentiation::FuncPtr y=x0*x0+x0*x1+x0/x1+c",
 you can take Operator instance y.
 
-"AutomaticDifferentiation.cbp" is a project manage file for Code::Blocks.
-
+The Above are the fundamental part of this library. Adding this, some utilities are prepared.
 
