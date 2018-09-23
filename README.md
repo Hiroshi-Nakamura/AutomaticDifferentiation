@@ -15,10 +15,13 @@ AutomaticDifferentiation::Operator operator(x) returns a value due to its operat
 and due to the operated Functor(s).
 
 The above are the basics of AutomaticDifferentiation::Functor.
-After this preperation, we can easily calculate the derivative Functor of AutomaticDifferentiation::Functor.
+After this preperation, we can easily calculate the derivative Functor.
 The derivative of AutomaticDifferentiation::Constant is always AutomaticDifferentiation::Constant(0.0).
 The derivative of AutomaticDifferentiation::Variable will be AutomaticDifferentiation::Constant(1.0) when derived by itself,
 otherwise (derived by other varable) it will be AutomaticDifferentiation::Constant(0.0).
+
+In the hpp code, this calculation is implemented by derivative(), whose argument is index of vector x.
+If you want derivative by the first variable of vector x, type "derivative(0)".
 
 Because of class morphorism, FuncPtr, which is a std::shared_ptr of Functor, is prepared.
 In your source code, you don't use Functor itself but FuncPtr.
