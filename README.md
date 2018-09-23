@@ -22,9 +22,9 @@ The derivative of AutomaticDifferentiation::Variable will be AutomaticDifferenti
 otherwise (derived by other varable) it will be AutomaticDifferentiation::Constant(0.0).
 The derivative of AutomaticDifferentiation::Operator will be calculated by derivative chain rule.
 For example, in the PRODUCT operator case, it will be "LEFT.derivertive()*RIGHT+LEFT*RIGHT.derivertive()".
-
 In the hpp code, this calculation is implemented by derivative(), whose argument is index of vector x.
 If you want derivative by the first variable of vector x, type "derivative(0)".
+Note that the out put of derivarive() is not a value, but a Functor (exactly a pointer of Functor).
 
 Because of class morphorism, FuncPtr, which is a std::shared_ptr of Functor, is prepared.
 In your source code, you don't use Functor itself but FuncPtr.
