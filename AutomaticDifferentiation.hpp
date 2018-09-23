@@ -24,6 +24,12 @@
         return FuncPtr<T,DIM>(new Operator<T,DIM>(FuncType::operant_name, FuncPtr<T,DIM>(new Constant<T,DIM>(left_val)), right)); \
     }
 
+#define MATH_FUNC_DEFINE(operant,operant_name) \
+    template<typename T, int DIM> \
+    FuncPtr<T,DIM> operant(const FuncPtr<T,DIM>& functor){ \
+        return FuncPtr<T,DIM>(new Operator<T,DIM>(FuncType::operant_name, functor)); \
+    }
+
 
 namespace AutomaticDifferentiation {
 
@@ -61,7 +67,7 @@ namespace AutomaticDifferentiation {
         }
     };
 
-    enum FuncType { SUM, DIFFERENCE, PRODUCT, QUOTIENT, MINUS, SIN, COS };
+    enum FuncType { SUM, DIFFERENCE, PRODUCT, QUOTIENT, MINUS, COS, SIN, TAN, ACOS, ASIN, ATAN, EXP, LOG, SQRT };
 
     template<typename T, int DIM>
     class Operator : public Functor<T,DIM> {
@@ -92,11 +98,32 @@ namespace AutomaticDifferentiation {
             case FuncType::MINUS:
                 return -(*left)(x);
                 break;
+            case FuncType::COS:
+                return std::cos( (*left)(x) );
+                break;
             case FuncType::SIN:
                 return std::sin( (*left)(x) );
                 break;
-            case FuncType::COS:
-                return std::cos( (*left)(x) );
+            case FuncType::TAN:
+                return std::tan( (*left)(x) );
+                break;
+            case FuncType::ACOS:
+                return std::acos( (*left)(x) );
+                break;
+            case FuncType::ASIN:
+                return std::asin( (*left)(x) );
+                break;
+            case FuncType::ATAN:
+                return std::atan( (*left)(x) );
+                break;
+            case FuncType::EXP:
+                return std::exp( (*left)(x) );
+                break;
+            case FuncType::LOG:
+                return std::log( (*left)(x) );
+                break;
+            case FuncType::SQRT:
+                return std::sqrt( (*left)(x) );
                 break;
             default:
                 throw std::string("Not defined operator in ")+__func__;
@@ -117,11 +144,32 @@ namespace AutomaticDifferentiation {
             case FuncType::QUOTIENT:
                 return (*left).derivative(idx) / right - left * (*right).derivative(idx) / right / right;
                 break;
+            case FuncType::COS:
+                return  - (*left).derivative(idx) * sin(left);
+                break;
             case FuncType::SIN:
                 return (*left).derivative(idx) * cos(left);
                 break;
-            case FuncType::COS:
-                return  - (*left).derivative(idx) * sin(left);
+            case FuncType::TAN:
+                return (*left).derivative(idx) / cos(left) / cos(left);
+                break;
+            case FuncType::ACOS:
+                return  - (*left).derivative(idx) / sqrt(1.0 - left*left);
+                break;
+            case FuncType::ASIN:
+                return (*left).derivative(idx)  / sqrt(1.0 - left*left);
+                break;
+            case FuncType::ATAN:
+                return (*left).derivative(idx) / (left*left + 1.0);
+                break;
+            case FuncType::EXP:
+                return (*left).derivative(idx) * exp(left);
+                break;
+            case FuncType::LOG:
+                return (*left).derivative(idx) / (left);
+                break;
+            case FuncType::SQRT:
+                return (*left).derivative(idx) / 2.0*sqrt(left);
                 break;
             default:
                 throw std::string("Not defined operator in ")+__func__;
@@ -155,19 +203,19 @@ namespace AutomaticDifferentiation {
     OPERATOR_FUNC_DEFINE(*,PRODUCT);
     OPERATOR_FUNC_DEFINE(/,QUOTIENT);
 
+    MATH_FUNC_DEFINE(cos,COS);
+    MATH_FUNC_DEFINE(sin,SIN);
+    MATH_FUNC_DEFINE(tan,TAN);
+    MATH_FUNC_DEFINE(acos,ACOS);
+    MATH_FUNC_DEFINE(asin,ASIN);
+    MATH_FUNC_DEFINE(atan,ATAN);
+    MATH_FUNC_DEFINE(exp,EXP);
+    MATH_FUNC_DEFINE(log,LOG);
+    MATH_FUNC_DEFINE(sqrt,SQRT);
+
     template<typename T, int DIM>
     FuncPtr<T,DIM> operator-(const FuncPtr<T,DIM>& functor){
         return FuncPtr<T,DIM>(new Operator<T,DIM>(FuncType::MINUS, functor));
-    }
-
-    template<typename T, int DIM>
-    FuncPtr<T,DIM> sin(const FuncPtr<T,DIM>& functor){
-        return FuncPtr<T,DIM>(new Operator<T,DIM>(FuncType::SIN, functor));
-    }
-
-    template<typename T, int DIM>
-    FuncPtr<T,DIM> cos(const FuncPtr<T,DIM>& functor){
-        return FuncPtr<T,DIM>(new Operator<T,DIM>(FuncType::COS, functor));
     }
 
     ///

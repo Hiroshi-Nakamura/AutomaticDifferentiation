@@ -26,19 +26,20 @@ int main(int argc, char** argv)
             AutomaticDifferentiation::FuncPtr<double,2> dy_0_1=(*dy_0).derivative(1);
             std::cout << "dy_0_1(val)" << (*dy_0_1)(val) << std::endl;
         }
+        std::cout << std::endl;
         {
             AutomaticDifferentiation::FuncPtr<double,1> x(new AutomaticDifferentiation::Variable<double,1>(0));
-            AutomaticDifferentiation::FuncPtr<double,1> y=cos(x);
+            AutomaticDifferentiation::FuncPtr<double,1> y=exp(x);
 #ifdef WITHOUT_EIGEN
-            const std::array<double,1> alpha{M_PI/3.0};
+            const std::array<double,1> val{M_PI/3.0};
 #else
-            const Eigen::Matrix<double,1,1> alpha{M_PI/3.0};
+            const Eigen::Matrix<double,1,1> val{1.0};
 #endif // WITHOUT_EIGEN
-            std::cout << "y(alpha)=" << (*y)(alpha) << std::endl;
+            std::cout << "y(val)=" << (*y)(val) << std::endl;
             AutomaticDifferentiation::FuncPtr<double,1> dy=(*y).derivative();
-            std::cout << "dy(alpha)=" << (*dy)(alpha) << std::endl;
+            std::cout << "dy(val)=" << (*dy)(val) << std::endl;
         }
-
+        std::cout << std::endl;
         {
             auto y=f(AutomaticDifferentiation::createVariables<double,3>());
             auto jac=AutomaticDifferentiation::jacobian(y);
