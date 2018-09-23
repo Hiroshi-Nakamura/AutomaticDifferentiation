@@ -30,7 +30,11 @@ Because of class morphorism, FuncPtr, which is a std::shared_ptr of Functor, is 
 In your source code, you don't use Functor itself but FuncPtr.
 When you want to create Variable, type "AutomaticDifferentiation::FuncPtr x0(new AutomaticDifferentiation::Variable(0));"
 In the case of Constant, type "AutomaticDifferentiation::FuncPtr c(new AutomaticDifferentiation::Constant(3.0));"
-The argument of Constructor of Variable and Constant are different, the formar (size_t) means the index of vector x, the latter (usually "double") means the constant value itself.
+The argument of Constructor of Variable and Constant are different,
+the formar (size_t) means the index of vector x, the latter (usually "double") means the constant value itself.
+Usually the Operator is not created explicitly,
+but by typing the equation, i.e. "AutomaticDifferentiation::FuncPtr y=x0*x0+x0*x1+x0/x1+c",
+you can take Operator instance y.
 
 "AutomaticDifferentiation.cbp" is a project manage file for Code::Blocks.
 
