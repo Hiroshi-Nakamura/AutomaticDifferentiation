@@ -13,7 +13,7 @@ AutomaticDifferentiation::Variable operator(x) returns a value due to vector x.
 AutomaticDifferentiation::Operator operator(x) returns a value due to its operation type, SUM or PRODUCT or so on,
 and due to the operated Functor(s).
 For example, in the SUM operator case, the operator(x) returns the sum of the left and the right Functor's operator(x) outputs.
-i.e. returns LEFT(x)+RIGHT(x), where LEFT is the left operated functor, RIGHT is the right one.
+i.e. returns **LEFT(x)+RIGHT(x)**, where **LEFT** is the left operated functor, **RIGHT** is the right one.
 
 The above are the basics of AutomaticDifferentiation::Functor.
 After this preperation, we can easily calculate the derivative Functor.
@@ -21,19 +21,19 @@ The derivative of AutomaticDifferentiation::Constant is always AutomaticDifferen
 The derivative of AutomaticDifferentiation::Variable will be AutomaticDifferentiation::Constant(1.0) when derived by itself,
 otherwise (derived by other varable) it will be AutomaticDifferentiation::Constant(0.0).
 The derivative of AutomaticDifferentiation::Operator will be calculated by derivative chain rule.
-For example, in the PRODUCT operator case, it will be **[tex:{LEFT.derivertive() \dot RIGHT + LEFT \dot RIGHT.derivertive()}]**.
+For example, in the PRODUCT operator case, it will be **LEFT.derivertive()\*RIGHT+LEFT\*RIGHT.derivertive()**.
 In the hpp code, this calculation is implemented by derivative(), whose argument is index of vector x.
-If you want derivative by the first variable of vector x, type "derivative(0)".
+If you want derivative by the first variable of vector x, type *derivative(0)*.
 Note that the output of derivarive() is not a value, but a Functor (exactly a pointer of Functor).
 
 Because of class morphorism, FuncPtr, which is a std::shared_ptr of Functor, is prepared.
 In your source code, don't use Functor itself but FuncPtr.
-When you want to create Variable, type "AutomaticDifferentiation::FuncPtr x0(new AutomaticDifferentiation::Variable(0));"
-In the case of Constant, type "AutomaticDifferentiation::FuncPtr c(new AutomaticDifferentiation::Constant(3.0));"
+When you want to create Variable, type *AutomaticDifferentiation::FuncPtr x0(new AutomaticDifferentiation::Variable(0));*.
+In the case of Constant, type *AutomaticDifferentiation::FuncPtr c(new AutomaticDifferentiation::Constant(3.0));*.
 The argument of Constructor of Variable and Constant are different,
 the formar (size_t) means the index of vector x, the latter (usually "double") means the constant value itself.
 Usually the Operator is not created explicitly,
-but by typing the equation, i.e. "AutomaticDifferentiation::FuncPtr y=x0*x0+x0*x1+x0/x1+c",
+but by typing the equation, i.e. *AutomaticDifferentiation::FuncPtr y=x0*x0+x0*x1+x0/x1+c*,
 you can take Operator instance y.
 
 The Above are the fundamental part of this library. Adding this, some utilities are prepared.
