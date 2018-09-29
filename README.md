@@ -9,8 +9,8 @@ Of course, this AutomaticDifferentiation::Functor has the operator(),
 whose argument is std::array standing for a mathmatical variable vector x.
 AutomaticDifferentiation::Functor derives 3 types classes, Constant, Variable and Operator.
 `AutomaticDifferentiation::Constant::operator(x)` always returns a constant value for any x.
-AutomaticDifferentiation::Variable::operator(x) returns a value due to vector x.
-AutomaticDifferentiation::Operator::operator(x) returns a value due to its operation type, SUM or PRODUCT or so on,
+`AutomaticDifferentiation::Variable::operator(x)` returns a value due to vector x.
+`AutomaticDifferentiation::Operator::operator(x)` returns a value due to its operation type, SUM or PRODUCT or so on,
 and due to the operated Functor(s).
 For example, in the SUM operator case, the operator(x) returns the sum of the left and the right Functor's operator(x) outputs,
 i.e. returns **LEFT(x)+RIGHT(x)**, where **LEFT** is the left operated functor, **RIGHT** is the right one.
@@ -30,7 +30,7 @@ That's why we can calculate higher-order derivative by repeating derivative(). F
 
 Because of class morphorism, FuncPtr, which is a std::shared_ptr of Functor, is prepared.
 In your source code, don't use Functor itself but FuncPtr.
-When you want to create Variable, type *AutomaticDifferentiation::FuncPtr x0(new AutomaticDifferentiation::Variable(0));*.
+When you want to create Variable, type `AutomaticDifferentiation::FuncPtr x0(new AutomaticDifferentiation::Variable(0));`.
 In the case of Constant, type *AutomaticDifferentiation::FuncPtr c(new AutomaticDifferentiation::Constant(3.0));*.
 The argument of Constructor of Variable and Constant are different,
 the formar (size_t) means the index of vector x, the latter (usually "double") means the constant value itself.
