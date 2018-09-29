@@ -8,7 +8,7 @@ Generally a Functor has an operator().
 Of course, this AutomaticDifferentiation::Functor has the operator(),
 whose argument is std::array standing for a mathmatical variable vector x.
 AutomaticDifferentiation::Functor derives 3 types classes, Constant, Variable and Operator.
-AutomaticDifferentiation::Constant::operator(x) always returns a constant value for any x.
+`AutomaticDifferentiation::Constant::operator(x)` always returns a constant value for any x.
 AutomaticDifferentiation::Variable::operator(x) returns a value due to vector x.
 AutomaticDifferentiation::Operator::operator(x) returns a value due to its operation type, SUM or PRODUCT or so on,
 and due to the operated Functor(s).
@@ -41,10 +41,10 @@ you can take Operator instance y.
 The Above are the fundamental part of this library. Adding this, some utilities are prepared.
 
 It is nanutal that the argument of a mathmatical function is much long vector.
-In such case, because we have to prepare *AutomaticDifferentiation::FuncPtr x_1(new AutomaticDifferentiation::Variable(0));*,...,*AutomaticDifferentiation::FuncPtr x_n(new AutomaticDifferentiation::Variable(n-1));*, the function *AutomaticDifferentiation::createVariables()* is prepared. 
+In such case, because we have to prepare *AutomaticDifferentiation::FuncPtr x_1(new AutomaticDifferentiation::Variable(0));*,...,*AutomaticDifferentiation::FuncPtr x_n(new AutomaticDifferentiation::Variable(n-1));*, the function *AutomaticDifferentiation::createVariables()* is prepared.
 By typing *AutomaticDifferentiation::FuncPtr y=f(AutomaticDifferentiation::createVariables());*, you can take a Functor y standing for function f().
 
-Jacobian and Hessian are popular. 
+Jacobian and Hessian are popular.
 The functions *AutomaticDifferentiation::jacobian()* and *AutomaticDifferentiation::hessian()* are prepared.
 Then you can obtain them by typing *auto jac=AutomaticDifferentiation::jacobian(y);* and *auto hes=AutomaticDifferentiation::hessian(y);*.
 
