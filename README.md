@@ -42,21 +42,28 @@ The argument of Constructor of Variable and Constant are different,
 the formar (size_t) means the index of vector x, the latter (usually "double") means the constant value itself.
 Usually the Operator is not created explicitly,
 but by typing the equation, i.e.
+
     AutomaticDifferentiation::FuncPtr y=x0*x0+x0*x1+x0/x1+c
+
 , you can take Operator instance y.
 
 The Above are the fundamental part of this library. Adding this, some utilities are prepared.
 
 It is nanutal that the argument of a mathmatical function is much long vector.
 In such case, because we have to prepare
+
     AutomaticDifferentiation::FuncPtr x_1(new AutomaticDifferentiation::Variable(0));*,...,*AutomaticDifferentiation::FuncPtr x_n(new AutomaticDifferentiation::Variable(n-1));*, the function *AutomaticDifferentiation::createVariables()
+
 is prepared.
 By typing
+
     AutomaticDifferentiation::FuncPtr y=f(AutomaticDifferentiation::createVariables());
+
 , you can take a Functor y standing for function f().
 
 Jacobian and Hessian are popular.
 The functions `AutomaticDifferentiation::jacobian()` and `AutomaticDifferentiation::hessian()` are prepared.
 Then you can obtain them by typing
+
     auto jac=AutomaticDifferentiation::jacobian(y);* and *auto hes=AutomaticDifferentiation::hessian(y);
 
