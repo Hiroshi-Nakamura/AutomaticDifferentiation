@@ -65,5 +65,6 @@ Jacobian and Hessian are popular.
 The functions `AutomaticDifferentiation::jacobian()` and `AutomaticDifferentiation::hessian()` are prepared.
 Then you can obtain them by typing
 
-    auto jac=AutomaticDifferentiation::jacobian(y);* and *auto hes=AutomaticDifferentiation::hessian(y);
+    auto jac=AutomaticDifferentiation::jacobian(y);
+    auto hes=AutomaticDifferentiation::hessian(y);
 
