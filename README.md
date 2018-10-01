@@ -1,7 +1,7 @@
 # AutomaticDifferentiation
 Implementation of automatic differentiation by using of a Functor class and its operator overload.
 You can easily run automatic differentiation program by including "AutomaticDifferentiation.hpp" to your sorce code.
-This library also allows you higher-order automatic differenciation, such as Hessian.
+This library also allows you higher-order automatic differentiation, such as Hessian.
 The sample of usages are shown in "AutomaticDifferentiationTest.cpp".
 
 Generally a Functor has an `operator()`.
