@@ -34,7 +34,7 @@ If you want derivative by the first variable of vector x, type `derivative(0)`.
 
 Note that the output of derivative() is not a value, but a Functor (exactly a pointer of Functor).
 That's why we can calculate higher-order derivative by repeating `derivative()`. 
-For example, `y.derivative(1).derivative(0)` will be **ddy/dx_1 dx_0*.
+For example, `y.derivative(1).derivative(0)` will be *ddy/dx_1 dx_0*.
 
 Because of class morphorism, `FuncPtr`, which is a `std::shared_ptr` of `Functor`, is prepared.
 In your source code, don't use `Functor` itself but `FuncPtr`.
