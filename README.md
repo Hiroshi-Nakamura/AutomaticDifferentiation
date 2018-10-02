@@ -23,11 +23,11 @@ otherwise (derived by other varable) it will be `AutomaticDifferentiation::Const
 The derivative of `AutomaticDifferentiation::Operator` will be calculated by **chain rule**.
 For example, in the PRODUCT operator case: 
 
-    (LEFT*RIGHT).derivarive()=LEFT.derivative()*RIGHT+LEFT*RIGHT.derivative()
+    d(LEFT*RIGHT)/dx=d(LEFT)/dx*RIGHT+LEFT*d(RIGHT)/dx
 
 The other example of SIN operator case:
 
-    (sin(ARG)).derivative()=ARG.derivative()*cos(ARG) 
+    d(sin(ARG))/dx=d(ARG)/dx*cos(ARG) 
 
 In the hpp code, this calculation is implemented by `derivative()`, whose argument is index of vector x.
 If you want derivative by the first variable of vector x, type `derivative(0)`.
