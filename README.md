@@ -21,8 +21,14 @@ The derivative of `AutomaticDifferentiation::Constant` is always `AutomaticDiffe
 The derivative of `AutomaticDifferentiation::Variable` will be `AutomaticDifferentiation::Constant(1.0)` when derived by itself,
 otherwise (derived by other varable) it will be `AutomaticDifferentiation::Constant(0.0)`.
 The derivative of `AutomaticDifferentiation::Operator` will be calculated by **chain rule**.
-For example, in the PRODUCT operator case, it will be **LEFT.derivative()\*RIGHT+LEFT\*RIGHT.derivative()**.
-The other example of SIM operator case, it will be **ARG.derivative()\*sin(ARG)**. 
+For example, in the PRODUCT operator case: 
+
+    (LEFT*RIGHT).derivarive()=LEFT.derivative()*RIGHT+LEFT*RIGHT.derivative()
+
+The other example of SIN operator case:
+
+    (sin(ARG)).derivative()=ARG.derivative()*cos(ARG) 
+
 In the hpp code, this calculation is implemented by `derivative()`, whose argument is index of vector x.
 If you want derivative by the first variable of vector x, type `derivative(0)`.
 
