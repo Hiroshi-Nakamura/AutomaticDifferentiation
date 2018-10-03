@@ -217,105 +217,83 @@ namespace AutomaticDifferentiation_Vector {
     }
 
     ///
-    /// utulity-- calculate Jacobian Functor
+    /// Matrix define for calculate Jacobian and Hessian
     ///
     template<typename T>
-    class VecFuncPtr {
+    class Mat {
     private:
-        std::vector<FuncPtr<T>> func_ptr;
+        const size_t nRows;
+        const size_t nCols;
+        std::vector<T> vec;
     public:
-        VecFuncPtr(const std::vector<FuncPtr<T>>& _func_ptr) : func_ptr(_func_ptr) {}
-        virtual std::vector<T> operator()(const std::vector<T>& x) const
-        {
-            std::vector<T> rtn;
-            for(size_t i=0; i<func_ptr.size(); i++){
-                rtn.push_back(std::move((*func_ptr[i])(x)));
+        Mat(const size_t _nRows, const size_t _nCols=1) : nRows(_nRows), nCols(_nCols), vec(nRows*nCols) {}
+        T& operator()(size_t row, size_t col=0){ return vec[nCols*row+col]; }
+        T* data(){ return vec.data(); }
+        operator std::string() const {
+            std::ostringstream oss;
+            for(size_t i=0; i<nRows; i++){
+                for(size_t j=0; j<nCols; j++){
+                    oss << " " << std::setw(8) << vec[nCols*i+j];
+                }
+                oss  << std::endl;
             }
-            return rtn;
-        }
-        virtual FuncPtr<T> operator[](const size_t idx) const
-        {
-            return func_ptr[idx];
-        }
-        virtual std::vector<FuncPtr<T>> to_vector() const
-        {
-            return func_ptr;
+            return oss.str();
         }
     };
 
+    ///
+    /// Matrix define for FuncPnr of Jacobian and Hessian
+    ///
     template<typename T>
-    VecFuncPtr<T> jacobian(const FuncPtr<T>& f, const size_t dim)
-    {
-        std::vector<FuncPtr<T>> rtn;
-        for(size_t i=0; i<dim; i++){
-            rtn.push_back(move((*f).derivative(i)));
+    class MatFuncPtr {
+    private:
+        const size_t nRows;
+        const size_t nCols;
+        std::vector<FuncPtr<T>> vec;
+    public:
+        MatFuncPtr(const size_t _nRows, const size_t _nCols=1) : nRows(_nRows), nCols(_nCols), vec(nRows*nCols) {}
+        FuncPtr<T>& operator()(const size_t row, const size_t col=0){ return vec[nCols*row+col]; }
+        Mat<T> operator()(const std::vector<T>& x) const
+        {
+            Mat<T> rtn(nRows,nCols);
+            for(size_t i=0; i<nRows; i++){
+                for(size_t j=0; j<nCols; j++){
+                    FuncPtr<T> func_ptr=vec[nCols*i+j];
+                    rtn(i,j)=(*func_ptr)(x);
+                }
+            }
+            return rtn;
         }
-        return VecFuncPtr<T>(rtn);
-    }
+    };
 
+    ///
+    /// utulity-- calculate Jacobian Functor
+    ///
+    template<typename T>
+    MatFuncPtr<T> jacobian(const FuncPtr<T>& f, const size_t dim)
+    {
+        MatFuncPtr<T> rtn(dim);
+        for(size_t i=0; i<dim; i++){
+            rtn(i,0)=(*f).derivative(i);
+        }
+        return rtn;
+    }
 
     ///
     /// utulity-- calculate Hessian Functor
     ///
     template<typename T>
-    class MatFuncPtr {
-    private:
-        std::vector<std::vector<FuncPtr<T>>> func_ptr;
-    public:
-        MatFuncPtr(const std::vector<std::vector<FuncPtr<T>>>& _func_ptr) : func_ptr(_func_ptr) {}
-        virtual std::vector<std::vector<T>> operator()(const std::vector<T>& x) const
-        {
-            size_t dim=func_ptr.size();
-            std::vector<std::vector<T>> rtn(dim,std::vector<T>(dim));
-            for(size_t i=0; i<dim; i++){
-                for(size_t j=0; j<dim; j++){
-                    rtn[i][j]=(*func_ptr[i][j])(x);
-                }
-            }
-            return rtn;
-        }
-        virtual std::vector<FuncPtr<T>> operator[](const size_t idx) const
-        {
-            return func_ptr[idx];
-        }
-
-    };
-
-    template<typename T>
     MatFuncPtr<T> hessian(const FuncPtr<T>& f, const size_t dim)
     {
-        std::vector<std::vector<FuncPtr<T>>> rtn;
-        auto jac=jacobian(f,dim);
+        MatFuncPtr<T> rtn(dim,dim);
+        MatFuncPtr<T> jac=jacobian(f,dim);
         for(size_t i=0; i<dim; i++){
-            rtn.push_back(std::move(jacobian(jac[i],dim).to_vector()));
-        }
-        return MatFuncPtr<T>(rtn);
-    }
-
-    ///
-    /// utulity-- convert string for display
-    ///
-    template<typename T>
-    std::string to_string(const std::vector<T>& vec)
-    {
-        std::ostringstream oss;
-        for(auto e: vec){
-            oss << " " << std::setw(8) << e << std::endl;
-        }
-        return oss.str();
-    }
-
-    template<typename T>
-    std::string to_string(const std::vector<std::vector<T>>& mat)
-    {
-        std::ostringstream oss;
-        for(auto row: mat){
-            for(auto e: row){
-                oss << " " << std::setw(8) << e ;
+            MatFuncPtr<T> jac_jac=jacobian(jac(i),dim);
+            for(size_t j=0; j<dim; j++){
+                rtn(i,j)=std::move(jac_jac(j));
             }
-            oss << std::endl;
         }
-        return oss.str();
+        return rtn;
     }
 }
 

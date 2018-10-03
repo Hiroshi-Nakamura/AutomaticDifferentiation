@@ -39,12 +39,12 @@ int main(int argc, char** argv)
         {
             using namespace AutomaticDifferentiation_Vector;
             FuncPtr<double> y=f(createVariables<double>(3));
-            VecFuncPtr<double> jac=jacobian(y,3);
+            MatFuncPtr<double> jac=jacobian(y,3);
             MatFuncPtr<double> hes=hessian(y,3);
             const std::vector<double> val{10.0, 2.0, 5.0};
             std::cout << "y(val)=" << (*y)(val) << std::endl;
-            std::cout << "jac(y)(val)=" << std::endl << to_string<double>(jac(val)) << std::endl;
-            std::cout << "hes(y)(val)=" << std::endl << to_string<double>(hes(val)) << std::endl;
+            std::cout << "jac(y)(val)=" << std::endl << std::string(jac(val)) << std::endl;
+            std::cout << "hes(y)(val)=" << std::endl << std::string(hes(val)) << std::endl;
         }
     }catch(std::string message){
         std::cerr << message << std::endl;
