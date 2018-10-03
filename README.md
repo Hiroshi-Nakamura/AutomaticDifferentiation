@@ -70,8 +70,8 @@ By just typing the below, you can take a Functor y standing for function f().
 
 Jacobian and Hessian are popular.
 The functions `AutomaticDifferentiation::jacobian()` and `AutomaticDifferentiation::hessian()` are prepared.
-Then you can obtain them by typing the below:
+Then you can obtain them by typing the below (dim is the dimention of variables):
 
-    auto jac=AutomaticDifferentiation::jacobian(y);
-    auto hes=AutomaticDifferentiation::hessian(y);
+    auto jac=AutomaticDifferentiation::jacobian(y,dim);
+    auto hes=AutomaticDifferentiation::hessian(y,dim);
 
