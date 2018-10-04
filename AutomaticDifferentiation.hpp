@@ -37,7 +37,9 @@ namespace AutomaticDifferentiation_Vector {
     template<typename T>
     class Functor {
     public:
-        virtual T operator()(const std::vector<T>& x) const =0; /// The same usage as a mathmatical function.
+        virtual T operator()(const T* x) const =0; /// The same usage as a mathmatical function.
+        T operator()(const std::vector<T>& x) const { return (*this)(x.data()); }; /// The same usage as a mathmatical function. NOT virtual.
+        T operator()(const Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>& x) const { return (*this)(x.data()); }; /// The same usage as a mathmatical function. NOT virtual.
         virtual std::shared_ptr<Functor<T>> derivative(size_t idx=0) const =0; /// Get derivative of this Functor. The return is also the derived class of Functor.
     };
 
@@ -50,7 +52,7 @@ namespace AutomaticDifferentiation_Vector {
         const T val;
     public:
         Constant(const T& _val) : val(_val) {}
-        virtual T operator()(const std::vector<T>& x) const
+        virtual T operator()(const T* x) const
         {
             return val;
         }
@@ -69,7 +71,7 @@ namespace AutomaticDifferentiation_Vector {
         const FuncPtr<T> right;
     public:
         Operator(FuncType _func_type, const FuncPtr<T>& _left, const FuncPtr<T>& _right=nullptr) : func_type(_func_type), left(_left), right(_right) {}
-        virtual T operator()(const std::vector<T>& x) const
+        virtual T operator()(const T* x) const
         {
             switch(func_type){
             case FuncType::SUM:
@@ -172,7 +174,7 @@ namespace AutomaticDifferentiation_Vector {
         const size_t index;
     public:
         Variable(const size_t _index) : index(_index) {}
-        virtual T operator()(const std::vector<T>& x) const
+        virtual T operator()(const T* x) const
         {
             return x[index];
         }
