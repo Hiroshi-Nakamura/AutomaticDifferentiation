@@ -27,7 +27,7 @@ int main(int argc, char** argv)
         }
         std::cout << std::endl;
         {
-            using namespace AutomaticDifferentiation_Vector;
+            using namespace AutomaticDifferentiation;
             FuncPtr<double> x(new Variable<double>(0));
             FuncPtr<double> y=exp(x);
             const std::vector<double> val{1.0};
@@ -37,14 +37,14 @@ int main(int argc, char** argv)
         }
         std::cout << std::endl;
         {
-            using namespace AutomaticDifferentiation_Vector;
+            using namespace AutomaticDifferentiation;
             FuncPtr<double> y=f(createVariables<double>(3));
             MatFuncPtr<double> jac=jacobian(y,3);
             MatFuncPtr<double> hes=hessian(y,3);
             const std::vector<double> val{10.0, 2.0, 5.0};
             std::cout << "y(val)=" << (*y)(val) << std::endl;
-            std::cout << "jac(y)(val)=" << std::endl << std::string(jac(val)) << std::endl;
-            std::cout << "hes(y)(val)=" << std::endl << std::string(hes(val)) << std::endl;
+            std::cout << "jac(y)(val)=" << std::endl << jac(val) << std::endl;
+            std::cout << "hes(y)(val)=" << std::endl << hes(val) << std::endl;
         }
     }catch(std::string message){
         std::cerr << message << std::endl;
