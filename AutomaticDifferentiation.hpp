@@ -130,6 +130,9 @@ namespace AutomaticDifferentiation {
             case FuncType::QUOTIENT:
                 return (*left).derivative(idx) / right - left * (*right).derivative(idx) / right / right;
                 break;
+            case FuncType::MINUS:
+                return -(*left).derivative(idx);
+                break;
             case FuncType::COS:
                 return  - (*left).derivative(idx) * sin(left);
                 break;
