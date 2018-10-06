@@ -8,21 +8,25 @@
 
 #define OPERATOR_FUNC_DEFINE(operant,operant_name) \
     template<typename T> \
-    FuncPtr<T> operator operant (const FuncPtr<T>& left, const FuncPtr<T>& right){ \
+    FuncPtr<T> operator operant (const FuncPtr<T>& left, const FuncPtr<T>& right) \
+    { \
         return FuncPtr<T>(new Operator<T>(FuncType::operant_name, left, right)); \
     } \
     template<typename T> \
-    FuncPtr<T> operator operant (const FuncPtr<T>& left, const T& right_val){ \
+    FuncPtr<T> operator operant (const FuncPtr<T>& left, const T& right_val) \
+    { \
         return FuncPtr<T>(new Operator<T>(FuncType::operant_name, left, FuncPtr<T>(new Constant<T>(right_val)))); \
     } \
     template<typename T> \
-    FuncPtr<T> operator operant (const T& left_val, const FuncPtr<T>& right){ \
+    FuncPtr<T> operator operant (const T& left_val, const FuncPtr<T>& right) \
+    { \
         return FuncPtr<T>(new Operator<T>(FuncType::operant_name, FuncPtr<T>(new Constant<T>(left_val)), right)); \
     }
 
 #define MATH_FUNC_DEFINE(operant,operant_name) \
     template<typename T> \
-    FuncPtr<T> operant(const FuncPtr<T>& functor){ \
+    FuncPtr<T> operant(const FuncPtr<T>& functor) \
+    { \
         return FuncPtr<T>(new Operator<T>(FuncType::operant_name, functor)); \
     }
 
@@ -199,7 +203,8 @@ namespace AutomaticDifferentiation {
     MATH_FUNC_DEFINE(sqrt,SQRT);
 
     template<typename T>
-    FuncPtr<T> operator-(const FuncPtr<T>& functor){
+    FuncPtr<T> operator-(const FuncPtr<T>& functor)
+    {
         return FuncPtr<T>(new Operator<T>(FuncType::MINUS, functor));
     }
 
@@ -214,6 +219,22 @@ namespace AutomaticDifferentiation {
             rtn.emplace_back(new Variable<T>(i));
         }
         return rtn;
+    }
+
+
+    ///
+    /// utulity-- create zero constant value
+    ///
+    template<typename T>
+    T zero()
+    {
+        return T(0.0);
+    }
+
+    template<>
+    FuncPtr<double> zero()
+    {
+        return FuncPtr<double>(new Constant<double>(0.0));
     }
 
     ///
