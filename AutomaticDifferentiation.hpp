@@ -232,9 +232,24 @@ namespace AutomaticDifferentiation {
     }
 
     template<>
-    FuncPtr<double> zero()
+    inline FuncPtr<double> zero()
     {
         return FuncPtr<double>(new Constant<double>(0.0));
+    }
+
+    ///
+    /// utulity-- create one constant value
+    ///
+    template<typename T>
+    T one()
+    {
+        return T(1.0);
+    }
+
+    template<>
+    inline FuncPtr<double> one()
+    {
+        return FuncPtr<double>(new Constant<double>(1.0));
     }
 
     ///
