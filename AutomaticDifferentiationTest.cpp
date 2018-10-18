@@ -29,7 +29,7 @@ int main(int argc, char** argv)
         {
             using namespace AutomaticDifferentiation;
             FuncPtr<double> x(new Variable<double>(0));
-            FuncPtr<double> y=exp(x);
+            FuncPtr<double> y=cosh(x);
             const std::vector<double> val{1.0};
             std::cout << "y(val)=" << (*y)(val) << std::endl;
             FuncPtr<double> dy=(*y).derivative();

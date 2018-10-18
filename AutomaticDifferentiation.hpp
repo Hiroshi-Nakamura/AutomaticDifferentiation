@@ -61,7 +61,7 @@ namespace AutomaticDifferentiation {
         }
     };
 
-    enum FuncType { SUM, DIFFERENCE, PRODUCT, QUOTIENT, MINUS, COS, SIN, TAN, ACOS, ASIN, ATAN, EXP, LOG, SQRT };
+    enum FuncType { SUM, DIFFERENCE, PRODUCT, QUOTIENT, MINUS, COS, SIN, TAN, ACOS, ASIN, ATAN, EXP, LOG, SQRT, COSH, SINH, TANH };
 
     template<typename T>
     class Operator : public Functor<T> {
@@ -115,6 +115,15 @@ namespace AutomaticDifferentiation {
             case FuncType::SQRT:
                 return std::sqrt( (*left)(x) );
                 break;
+            case FuncType::COSH:
+                return std::cosh( (*left)(x) );
+                break;
+            case FuncType::SINH:
+                return std::sinh( (*left)(x) );
+                break;
+            case FuncType::TANH:
+                return std::tanh( (*left)(x) );
+                break;
             default:
                 throw std::string("Not defined operator in ")+__func__;
             }
@@ -164,6 +173,15 @@ namespace AutomaticDifferentiation {
             case FuncType::SQRT:
                 return (*left).derivative(idx) / 2.0*sqrt(left);
                 break;
+            case FuncType::COSH:
+                return (*left).derivative(idx) * sinh(left);
+                break;
+            case FuncType::SINH:
+                return (*left).derivative(idx) * cosh(left);
+                break;
+            case FuncType::TANH:
+                return (*left).derivative(idx) / cosh(left) / cosh(left);
+                break;
             default:
                 throw std::string("Not defined operator in ")+__func__;
             }
@@ -201,6 +219,9 @@ namespace AutomaticDifferentiation {
     MATH_FUNC_DEFINE(exp,EXP);
     MATH_FUNC_DEFINE(log,LOG);
     MATH_FUNC_DEFINE(sqrt,SQRT);
+    MATH_FUNC_DEFINE(cosh,COSH);
+    MATH_FUNC_DEFINE(sinh,SINH);
+    MATH_FUNC_DEFINE(tanh,TANH);
 
     template<typename T>
     FuncPtr<T> operator-(const FuncPtr<T>& functor)
