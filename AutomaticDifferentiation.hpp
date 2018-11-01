@@ -171,7 +171,7 @@ namespace AutomaticDifferentiation {
                 return (*left).derivative(idx) / (left);
                 break;
             case FuncType::SQRT:
-                return (*left).derivative(idx) / 2.0*sqrt(left);
+                return (*left).derivative(idx) / 2.0 / sqrt(left);
                 break;
             case FuncType::COSH:
                 return (*left).derivative(idx) * sinh(left);
