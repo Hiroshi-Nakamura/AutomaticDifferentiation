@@ -49,6 +49,10 @@ namespace AutomaticDifferentiation {
     class Constant : public Functor<T> {
     private:
         const T val;
+        template<typename TYPE>
+        friend std::string toString(const FuncPtr<TYPE>& functor);
+        template<typename TYPE>
+        friend inline void simplification(FuncPtr<TYPE>& functor);
     public:
         Constant(const T& _val) : val(_val) {}
         virtual T operator()(const T* x) const
@@ -65,9 +69,13 @@ namespace AutomaticDifferentiation {
 
     template<typename T>
     class Operator : public Functor<T> {
-        const FuncType func_type;
-        const FuncPtr<T> left;
-        const FuncPtr<T> right;
+        FuncType func_type;
+        FuncPtr<T> left;
+        FuncPtr<T> right;
+        template<typename TYPE>
+        friend std::string toString(const FuncPtr<TYPE>& functor);
+        template<typename TYPE>
+        friend inline void simplification(FuncPtr<TYPE>& functor);
     public:
         Operator(FuncType _func_type, const FuncPtr<T>& _left, const FuncPtr<T>& _right=nullptr) : func_type(_func_type), left(_left), right(_right) {}
         virtual T operator()(const T* x) const
@@ -192,6 +200,10 @@ namespace AutomaticDifferentiation {
     class Variable : public Functor<T> {
     private:
         const size_t index;
+        template<typename TYPE>
+        friend std::string toString(const FuncPtr<TYPE>& functor);
+        template<typename TYPE>
+        friend inline void simplification(FuncPtr<TYPE>& functor);
     public:
         Variable(const size_t _index) : index(_index) {}
         virtual T operator()(const T* x) const
@@ -228,6 +240,19 @@ namespace AutomaticDifferentiation {
     {
         return FuncPtr<T>(new Operator<T>(FuncType::MINUS, functor));
     }
+
+
+    ///
+    /// Simplification of Functor
+    ///
+    template<typename T>
+    void simplification(FuncPtr<T>& functor);
+
+    ///
+    /// utulity-- show Functor
+    ///
+    template<typename T>
+    std::string toString(const FuncPtr<T>& functor);
 
     ///
     /// utulity-- create variables
@@ -330,5 +355,154 @@ namespace AutomaticDifferentiation {
         return rtn;
     }
 }
+
+///
+/// utulity-- show Functor
+///
+template<typename T>
+inline std::string AutomaticDifferentiation::toString(const FuncPtr<T>& functor)
+{
+    std::shared_ptr<Operator<T>> op=std::dynamic_pointer_cast<Operator<T>>(functor);
+    std::shared_ptr<Variable<T>> va=std::dynamic_pointer_cast<Variable<T>>(functor);
+    std::shared_ptr<Constant<T>> co=std::dynamic_pointer_cast<Constant<T>>(functor);
+    if(op!=nullptr){
+        switch(op->func_type){
+        case FuncType::SUM:
+            return "("+toString(op->left)+")+("+toString(op->right)+")";
+            break;
+        case FuncType::DIFFERENCE:
+            return "("+toString(op->left)+")-("+toString(op->right)+")";
+            break;
+        case FuncType::PRODUCT:
+            return "("+toString(op->left)+")*("+toString(op->right)+")";
+            break;
+        case FuncType::QUOTIENT:
+            return "("+toString(op->left)+")/("+toString(op->right)+")";
+            break;
+        case FuncType::MINUS:
+            return "-("+toString(op->left)+")";
+            break;
+        case FuncType::COS:
+            return "cos("+toString(op->left)+")";
+            break;
+        case FuncType::SIN:
+            return "sin("+toString(op->left)+")";
+            break;
+        case FuncType::TAN:
+            return "tan("+toString(op->left)+")";
+            break;
+        case FuncType::ACOS:
+            return "acos("+toString(op->left)+")";
+            break;
+        case FuncType::ASIN:
+            return "asin("+toString(op->left)+")";
+            break;
+        case FuncType::ATAN:
+            return "atan("+toString(op->left)+")";
+            break;
+        case FuncType::EXP:
+            return "exp("+toString(op->left)+")";
+            break;
+        case FuncType::LOG:
+            return "log("+toString(op->left)+")";
+            break;
+        case FuncType::SQRT:
+            return "sqrt("+toString(op->left)+")";
+            break;
+        case FuncType::COSH:
+            return "cosh("+toString(op->left)+")";
+            break;
+        case FuncType::SINH:
+            return "sinh("+toString(op->left)+")";
+            break;
+        case FuncType::TANH:
+            return "tanh("+toString(op->left)+")";
+            break;
+        default:
+            throw std::string("Not defined operator in ")+__func__;
+        }
+    }
+    if(va!=nullptr){
+        return std::string("x_")+std::to_string(va->index);
+    }
+    if(co!=nullptr){
+        return std::to_string(co->val);
+    }
+    return "ERROR";
+}
+
+///
+/// Simplification of Functor
+///
+template<typename T>
+inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
+{
+    std::shared_ptr<Operator<T>> op=std::dynamic_pointer_cast<Operator<T>>(functor);
+    std::shared_ptr<Variable<T>> va=std::dynamic_pointer_cast<Variable<T>>(functor);
+    std::shared_ptr<Constant<T>> co=std::dynamic_pointer_cast<Constant<T>>(functor);
+    if(op!=nullptr){
+        simplification(op->left);
+        if(op->right!=nullptr) simplification(op->right);
+        /// conbination of sum and minus
+        if(op->func_type==FuncType::SUM){
+            std::shared_ptr<Operator<T>> right=std::dynamic_pointer_cast<Operator<T>>(op->right);
+            if(right!=nullptr && right->func_type==FuncType::MINUS){
+                op->func_type=FuncType::DIFFERENCE;
+                op->right=right->left;
+            }
+        }
+        /// conbination of difference and minus
+        if(op->func_type==FuncType::DIFFERENCE){
+            std::shared_ptr<Operator<T>> right=std::dynamic_pointer_cast<Operator<T>>(op->right);
+            if(right!=nullptr && right->func_type==FuncType::MINUS){
+                op->func_type=FuncType::SUM;
+                op->right=right->left;
+            }
+        }
+        /// sum and difference
+        if(op->func_type==FuncType::SUM || op->func_type==FuncType::DIFFERENCE){
+            std::shared_ptr<Constant<T>> left=std::dynamic_pointer_cast<Constant<T>>(op->left);
+            std::shared_ptr<Constant<T>> right=std::dynamic_pointer_cast<Constant<T>>(op->right);
+            if(left!=nullptr && left->val==T(0.0)){
+                if(op->func_type==FuncType::SUM){
+                    functor=op->right;
+                }else{
+                    functor=FuncPtr<T>(new Operator<T>(FuncType::MINUS, op->right, nullptr));
+                }
+            }else if(right!=nullptr && right->val==T(0.0)){
+                functor=op->left;
+            }
+        }
+        /// product
+        if(op->func_type==FuncType::PRODUCT){
+            std::shared_ptr<Constant<T>> left=std::dynamic_pointer_cast<Constant<T>>(op->left);
+            std::shared_ptr<Constant<T>> right=std::dynamic_pointer_cast<Constant<T>>(op->right);
+            if(left!=nullptr){
+                if(left->val==T(1.0)){
+                    functor=op->right;
+                }else if(left->val==T(0.0)){
+                    functor=op->left; /// set zero
+                }
+            }else if(right!=nullptr){
+                if(right->val==T(1.0)){
+                    functor=op->left;
+                }else if(right->val==T(0.0)){
+                    functor=op->right; /// set zero
+                }
+            }
+        }
+        if(op->func_type==FuncType::QUOTIENT){
+            std::shared_ptr<Constant<T>> left=std::dynamic_pointer_cast<Constant<T>>(op->left);
+            if(left!=nullptr && left->val==T(0.0)){
+                functor=op->left; /// set zero
+            }
+        }
+    }
+    if(va!=nullptr){
+    }
+    if(co!=nullptr){
+    }
+}
+
 
 #endif // AUTOMATICDIFFERENTIATION_HPP_INCLUDED
