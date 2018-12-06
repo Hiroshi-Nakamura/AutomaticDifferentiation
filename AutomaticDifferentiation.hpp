@@ -438,12 +438,12 @@ template<typename T>
 inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
 {
     std::shared_ptr<Operator<T>> op=std::dynamic_pointer_cast<Operator<T>>(functor);
-    std::shared_ptr<Variable<T>> va=std::dynamic_pointer_cast<Variable<T>>(functor);
-    std::shared_ptr<Constant<T>> co=std::dynamic_pointer_cast<Constant<T>>(functor);
     if(op!=nullptr){
+        /// call recursively
         simplification(op->left);
         if(op->right!=nullptr) simplification(op->right);
-        /// conbination of sum and minus
+
+        /// conbination of sum and minus -->> difference
         if(op->func_type==FuncType::SUM){
             std::shared_ptr<Operator<T>> right=std::dynamic_pointer_cast<Operator<T>>(op->right);
             if(right!=nullptr && right->func_type==FuncType::MINUS){
@@ -451,7 +451,8 @@ inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
                 op->right=right->left;
             }
         }
-        /// conbination of difference and minus
+
+        /// conbination of difference and minus -->> sum
         if(op->func_type==FuncType::DIFFERENCE){
             std::shared_ptr<Operator<T>> right=std::dynamic_pointer_cast<Operator<T>>(op->right);
             if(right!=nullptr && right->func_type==FuncType::MINUS){
@@ -459,20 +460,22 @@ inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
                 op->right=right->left;
             }
         }
-        /// sum and difference
+
+        /// sum and difference: zero -->> other
         if(op->func_type==FuncType::SUM || op->func_type==FuncType::DIFFERENCE){
             std::shared_ptr<Constant<T>> left=std::dynamic_pointer_cast<Constant<T>>(op->left);
             std::shared_ptr<Constant<T>> right=std::dynamic_pointer_cast<Constant<T>>(op->right);
             if(left!=nullptr && left->val==T(0.0)){
                 if(op->func_type==FuncType::SUM){
                     functor=op->right;
-                }else{
+                }else{ /// DIFFERENCE
                     functor=FuncPtr<T>(new Operator<T>(FuncType::MINUS, op->right, nullptr));
                 }
             }else if(right!=nullptr && right->val==T(0.0)){
                 functor=op->left;
             }
         }
+
         /// product
         if(op->func_type==FuncType::PRODUCT){
             std::shared_ptr<Constant<T>> left=std::dynamic_pointer_cast<Constant<T>>(op->left);
@@ -491,16 +494,14 @@ inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
                 }
             }
         }
+
+        /// quotient
         if(op->func_type==FuncType::QUOTIENT){
             std::shared_ptr<Constant<T>> left=std::dynamic_pointer_cast<Constant<T>>(op->left);
             if(left!=nullptr && left->val==T(0.0)){
                 functor=op->left; /// set zero
             }
         }
-    }
-    if(va!=nullptr){
-    }
-    if(co!=nullptr){
     }
 }
 
