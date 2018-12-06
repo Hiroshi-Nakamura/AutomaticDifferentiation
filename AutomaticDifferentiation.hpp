@@ -273,61 +273,64 @@ inline T AutomaticDifferentiation::Operator<T>::operator()(const T* x) const
 template<typename T>
 inline AutomaticDifferentiation::FuncPtr<T> AutomaticDifferentiation::Operator<T>::derivative(size_t idx) const
 {
+    FuncPtr<T> rtn;
     switch(func_type){
     case FuncType::SUM:
-        return (*left).derivative(idx) + (*right).derivative(idx);
+        rtn= (*left).derivative(idx) + (*right).derivative(idx);
         break;
     case FuncType::DIFFERENCE:
-        return (*left).derivative(idx) - (*right).derivative(idx);
+        rtn= (*left).derivative(idx) - (*right).derivative(idx);
         break;
     case FuncType::PRODUCT:
-        return (*left).derivative(idx) * right + left * (*right).derivative(idx);
+        rtn= (*left).derivative(idx) * right + left * (*right).derivative(idx);
         break;
     case FuncType::QUOTIENT:
-        return (*left).derivative(idx) / right - left * (*right).derivative(idx) / right / right;
+        rtn= (*left).derivative(idx) / right - left * (*right).derivative(idx) / right / right;
         break;
     case FuncType::MINUS:
-        return -(*left).derivative(idx);
+        rtn= -(*left).derivative(idx);
         break;
     case FuncType::COS:
-        return  - (*left).derivative(idx) * sin(left);
+        rtn= - (*left).derivative(idx) * sin(left);
         break;
     case FuncType::SIN:
-        return (*left).derivative(idx) * cos(left);
+        rtn= (*left).derivative(idx) * cos(left);
         break;
     case FuncType::TAN:
-        return (*left).derivative(idx) / cos(left) / cos(left);
+        rtn= (*left).derivative(idx) / cos(left) / cos(left);
         break;
     case FuncType::ACOS:
-        return  - (*left).derivative(idx) / sqrt(1.0 - left*left);
+        rtn= - (*left).derivative(idx) / sqrt(1.0 - left*left);
         break;
     case FuncType::ASIN:
-        return (*left).derivative(idx)  / sqrt(1.0 - left*left);
+        rtn= (*left).derivative(idx)  / sqrt(1.0 - left*left);
         break;
     case FuncType::ATAN:
-        return (*left).derivative(idx) / (left*left + 1.0);
+        rtn= (*left).derivative(idx) / (left*left + 1.0);
         break;
     case FuncType::EXP:
-        return (*left).derivative(idx) * exp(left);
+        rtn= (*left).derivative(idx) * exp(left);
         break;
     case FuncType::LOG:
-        return (*left).derivative(idx) / (left);
+        rtn= (*left).derivative(idx) / (left);
         break;
     case FuncType::SQRT:
-        return (*left).derivative(idx) / 2.0 / sqrt(left);
+        rtn= (*left).derivative(idx) / 2.0 / sqrt(left);
         break;
     case FuncType::COSH:
-        return (*left).derivative(idx) * sinh(left);
+        rtn= (*left).derivative(idx) * sinh(left);
         break;
     case FuncType::SINH:
-        return (*left).derivative(idx) * cosh(left);
+        rtn= (*left).derivative(idx) * cosh(left);
         break;
     case FuncType::TANH:
-        return (*left).derivative(idx) / cosh(left) / cosh(left);
+        rtn= (*left).derivative(idx) / cosh(left) / cosh(left);
         break;
     default:
         throw std::string("Not defined operator in ")+__func__;
     }
+    simplification(rtn);
+    return rtn;
 }
 
 
