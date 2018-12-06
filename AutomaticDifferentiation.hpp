@@ -55,14 +55,8 @@ namespace AutomaticDifferentiation {
         friend inline void simplification(FuncPtr<TYPE>& functor);
     public:
         Constant(const T& _val) : val(_val) {}
-        virtual T operator()(const T* x) const
-        {
-            return val;
-        }
-        virtual FuncPtr<T> derivative(size_t idx) const
-        {
-            return FuncPtr<T>(new Constant(0.0));
-        }
+        virtual T operator()(const T* x) const { return val; }
+        virtual FuncPtr<T> derivative(size_t idx) const { return FuncPtr<T>(new Constant(0.0)); }
     };
 
     enum FuncType { SUM, DIFFERENCE, PRODUCT, QUOTIENT, MINUS, COS, SIN, TAN, ACOS, ASIN, ATAN, EXP, LOG, SQRT, COSH, SINH, TANH };
@@ -78,122 +72,8 @@ namespace AutomaticDifferentiation {
         friend inline void simplification(FuncPtr<TYPE>& functor);
     public:
         Operator(FuncType _func_type, const FuncPtr<T>& _left, const FuncPtr<T>& _right=nullptr) : func_type(_func_type), left(_left), right(_right) {}
-        virtual T operator()(const T* x) const
-        {
-            switch(func_type){
-            case FuncType::SUM:
-                return (*left)(x) + (*right)(x);
-                break;
-            case FuncType::DIFFERENCE:
-                return (*left)(x) - (*right)(x);
-                break;
-            case FuncType::PRODUCT:
-                return (*left)(x) * (*right)(x);
-                break;
-            case FuncType::QUOTIENT:
-                return (*left)(x) / (*right)(x);
-                break;
-            case FuncType::MINUS:
-                return -(*left)(x);
-                break;
-            case FuncType::COS:
-                return std::cos( (*left)(x) );
-                break;
-            case FuncType::SIN:
-                return std::sin( (*left)(x) );
-                break;
-            case FuncType::TAN:
-                return std::tan( (*left)(x) );
-                break;
-            case FuncType::ACOS:
-                return std::acos( (*left)(x) );
-                break;
-            case FuncType::ASIN:
-                return std::asin( (*left)(x) );
-                break;
-            case FuncType::ATAN:
-                return std::atan( (*left)(x) );
-                break;
-            case FuncType::EXP:
-                return std::exp( (*left)(x) );
-                break;
-            case FuncType::LOG:
-                return std::log( (*left)(x) );
-                break;
-            case FuncType::SQRT:
-                return std::sqrt( (*left)(x) );
-                break;
-            case FuncType::COSH:
-                return std::cosh( (*left)(x) );
-                break;
-            case FuncType::SINH:
-                return std::sinh( (*left)(x) );
-                break;
-            case FuncType::TANH:
-                return std::tanh( (*left)(x) );
-                break;
-            default:
-                throw std::string("Not defined operator in ")+__func__;
-            }
-        }
-        virtual FuncPtr<T> derivative(size_t idx) const
-        {
-            switch(func_type){
-            case FuncType::SUM:
-                return (*left).derivative(idx) + (*right).derivative(idx);
-                break;
-            case FuncType::DIFFERENCE:
-                return (*left).derivative(idx) - (*right).derivative(idx);
-                break;
-            case FuncType::PRODUCT:
-                return (*left).derivative(idx) * right + left * (*right).derivative(idx);
-                break;
-            case FuncType::QUOTIENT:
-                return (*left).derivative(idx) / right - left * (*right).derivative(idx) / right / right;
-                break;
-            case FuncType::MINUS:
-                return -(*left).derivative(idx);
-                break;
-            case FuncType::COS:
-                return  - (*left).derivative(idx) * sin(left);
-                break;
-            case FuncType::SIN:
-                return (*left).derivative(idx) * cos(left);
-                break;
-            case FuncType::TAN:
-                return (*left).derivative(idx) / cos(left) / cos(left);
-                break;
-            case FuncType::ACOS:
-                return  - (*left).derivative(idx) / sqrt(1.0 - left*left);
-                break;
-            case FuncType::ASIN:
-                return (*left).derivative(idx)  / sqrt(1.0 - left*left);
-                break;
-            case FuncType::ATAN:
-                return (*left).derivative(idx) / (left*left + 1.0);
-                break;
-            case FuncType::EXP:
-                return (*left).derivative(idx) * exp(left);
-                break;
-            case FuncType::LOG:
-                return (*left).derivative(idx) / (left);
-                break;
-            case FuncType::SQRT:
-                return (*left).derivative(idx) / 2.0 / sqrt(left);
-                break;
-            case FuncType::COSH:
-                return (*left).derivative(idx) * sinh(left);
-                break;
-            case FuncType::SINH:
-                return (*left).derivative(idx) * cosh(left);
-                break;
-            case FuncType::TANH:
-                return (*left).derivative(idx) / cosh(left) / cosh(left);
-                break;
-            default:
-                throw std::string("Not defined operator in ")+__func__;
-            }
-        }
+        virtual T operator()(const T* x) const;
+        virtual FuncPtr<T> derivative(size_t idx) const;
     };
 
     template<typename T>
@@ -206,10 +86,7 @@ namespace AutomaticDifferentiation {
         friend inline void simplification(FuncPtr<TYPE>& functor);
     public:
         Variable(const size_t _index) : index(_index) {}
-        virtual T operator()(const T* x) const
-        {
-            return x[index];
-        }
+        virtual T operator()(const T* x) const { return x[index]; }
         FuncPtr<T> derivative(size_t idx) const
         {
             if(idx==index) return FuncPtr<T>(new Constant<T>(1.0));
@@ -236,17 +113,8 @@ namespace AutomaticDifferentiation {
     MATH_FUNC_DEFINE(tanh,TANH);
 
     template<typename T>
-    FuncPtr<T> operator-(const FuncPtr<T>& functor)
-    {
-        return FuncPtr<T>(new Operator<T>(FuncType::MINUS, functor));
-    }
+    FuncPtr<T> operator-(const FuncPtr<T>& functor){ return FuncPtr<T>(new Operator<T>(FuncType::MINUS, functor)); }
 
-
-    ///
-    /// Simplification of Functor
-    ///
-    template<typename T>
-    void simplification(FuncPtr<T>& functor);
 
     ///
     /// utulity-- show Functor
@@ -255,48 +123,34 @@ namespace AutomaticDifferentiation {
     std::string toString(const FuncPtr<T>& functor);
 
     ///
+    /// Simplification of Functor
+    ///
+    template<typename T>
+    void simplification(FuncPtr<T>& functor);
+
+    ///
     /// utulity-- create variables
     ///
     template<typename T>
-    std::vector<FuncPtr<T>> createVariables(size_t dim)
-    {
-        std::vector<FuncPtr<T>> rtn;
-        for(size_t i=0; i<dim; i++){
-            rtn.emplace_back(new Variable<T>(i));
-        }
-        return rtn;
-    }
-
+    std::vector<FuncPtr<T>> createVariables(size_t dim);
 
     ///
     /// utulity-- create zero constant value
     ///
     template<typename T>
-    T zero()
-    {
-        return T(0.0);
-    }
+    T zero(){ return T(0.0); }
 
     template<>
-    inline FuncPtr<double> zero()
-    {
-        return FuncPtr<double>(new Constant<double>(0.0));
-    }
+    inline FuncPtr<double> zero(){ return FuncPtr<double>(new Constant<double>(0.0)); }
 
     ///
     /// utulity-- create one constant value
     ///
     template<typename T>
-    T one()
-    {
-        return T(1.0);
-    }
+    T one(){ return T(1.0); }
 
     template<>
-    inline FuncPtr<double> one()
-    {
-        return FuncPtr<double>(new Constant<double>(1.0));
-    }
+    inline FuncPtr<double> one(){ return FuncPtr<double>(new Constant<double>(1.0)); }
 
     ///
     /// Matrix define for FuncPnr of Jacobian and Hessian
@@ -355,6 +209,127 @@ namespace AutomaticDifferentiation {
         return rtn;
     }
 }
+
+template<typename T>
+inline T AutomaticDifferentiation::Operator<T>::operator()(const T* x) const
+{
+    switch(func_type){
+    case FuncType::SUM:
+        return (*left)(x) + (*right)(x);
+        break;
+    case FuncType::DIFFERENCE:
+        return (*left)(x) - (*right)(x);
+        break;
+    case FuncType::PRODUCT:
+        return (*left)(x) * (*right)(x);
+        break;
+    case FuncType::QUOTIENT:
+        return (*left)(x) / (*right)(x);
+        break;
+    case FuncType::MINUS:
+        return -(*left)(x);
+        break;
+    case FuncType::COS:
+        return std::cos( (*left)(x) );
+        break;
+    case FuncType::SIN:
+        return std::sin( (*left)(x) );
+        break;
+    case FuncType::TAN:
+        return std::tan( (*left)(x) );
+        break;
+    case FuncType::ACOS:
+        return std::acos( (*left)(x) );
+        break;
+    case FuncType::ASIN:
+        return std::asin( (*left)(x) );
+        break;
+    case FuncType::ATAN:
+        return std::atan( (*left)(x) );
+        break;
+    case FuncType::EXP:
+        return std::exp( (*left)(x) );
+        break;
+    case FuncType::LOG:
+        return std::log( (*left)(x) );
+        break;
+    case FuncType::SQRT:
+        return std::sqrt( (*left)(x) );
+        break;
+    case FuncType::COSH:
+        return std::cosh( (*left)(x) );
+        break;
+    case FuncType::SINH:
+        return std::sinh( (*left)(x) );
+        break;
+    case FuncType::TANH:
+        return std::tanh( (*left)(x) );
+        break;
+    default:
+        throw std::string("Not defined operator in ")+__func__;
+    }
+}
+
+template<typename T>
+inline AutomaticDifferentiation::FuncPtr<T> AutomaticDifferentiation::Operator<T>::derivative(size_t idx) const
+{
+    switch(func_type){
+    case FuncType::SUM:
+        return (*left).derivative(idx) + (*right).derivative(idx);
+        break;
+    case FuncType::DIFFERENCE:
+        return (*left).derivative(idx) - (*right).derivative(idx);
+        break;
+    case FuncType::PRODUCT:
+        return (*left).derivative(idx) * right + left * (*right).derivative(idx);
+        break;
+    case FuncType::QUOTIENT:
+        return (*left).derivative(idx) / right - left * (*right).derivative(idx) / right / right;
+        break;
+    case FuncType::MINUS:
+        return -(*left).derivative(idx);
+        break;
+    case FuncType::COS:
+        return  - (*left).derivative(idx) * sin(left);
+        break;
+    case FuncType::SIN:
+        return (*left).derivative(idx) * cos(left);
+        break;
+    case FuncType::TAN:
+        return (*left).derivative(idx) / cos(left) / cos(left);
+        break;
+    case FuncType::ACOS:
+        return  - (*left).derivative(idx) / sqrt(1.0 - left*left);
+        break;
+    case FuncType::ASIN:
+        return (*left).derivative(idx)  / sqrt(1.0 - left*left);
+        break;
+    case FuncType::ATAN:
+        return (*left).derivative(idx) / (left*left + 1.0);
+        break;
+    case FuncType::EXP:
+        return (*left).derivative(idx) * exp(left);
+        break;
+    case FuncType::LOG:
+        return (*left).derivative(idx) / (left);
+        break;
+    case FuncType::SQRT:
+        return (*left).derivative(idx) / 2.0 / sqrt(left);
+        break;
+    case FuncType::COSH:
+        return (*left).derivative(idx) * sinh(left);
+        break;
+    case FuncType::SINH:
+        return (*left).derivative(idx) * cosh(left);
+        break;
+    case FuncType::TANH:
+        return (*left).derivative(idx) / cosh(left) / cosh(left);
+        break;
+    default:
+        throw std::string("Not defined operator in ")+__func__;
+    }
+}
+
 
 ///
 /// utulity-- show Functor
@@ -503,6 +478,19 @@ inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
             }
         }
     }
+}
+
+///
+/// utulity-- create variables
+///
+template<typename T>
+inline std::vector<AutomaticDifferentiation::FuncPtr<T>> AutomaticDifferentiation::createVariables(size_t dim)
+{
+    std::vector<FuncPtr<T>> rtn;
+    for(size_t i=0; i<dim; i++){
+        rtn.emplace_back(new Variable<T>(i));
+    }
+    return rtn;
 }
 
 
