@@ -16,14 +16,24 @@ int main(int argc, char** argv)
             FuncPtr<double> c(new Constant<double>(3.0));
             FuncPtr<double> y=x0*x0+x0*x1+x0/x1+c;
 
+            std::cout << toString(y) << std::endl;
+
             const std::vector<double> val{10.0,2.0};
             std::cout << "y(val)=" << (*y)(val) << std::endl;
 
             FuncPtr<double> dy_0=(*y).derivative(0);
-            std::cout << "dy_0(val)" << (*dy_0)(val) << std::endl;
+            std::cout << "dy_0(val)=" << (*dy_0)(val) << std::endl;
+
+            std::cout << "original:" << std::endl << toString(dy_0) << std::endl;
+            simplification(dy_0);
+            std::cout << "simplified:" << std::endl << toString(dy_0) << std::endl;
 
             FuncPtr<double> dy_0_1=(*dy_0).derivative(1);
-            std::cout << "dy_0_1(val)" << (*dy_0_1)(val) << std::endl;
+            std::cout << "dy_0_1(val)=" << (*dy_0_1)(val) << std::endl;
+
+            std::cout << "original:" << std::endl << toString(dy_0_1) << std::endl;
+            simplification(dy_0_1);
+            std::cout << "simplified:" << std::endl << toString(dy_0_1) << std::endl;
         }
         std::cout << std::endl;
         {
