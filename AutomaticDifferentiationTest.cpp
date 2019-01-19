@@ -55,6 +55,12 @@ int main(int argc, char** argv)
             std::cout << "y(val)=" << (*y)(val) << std::endl;
             std::cout << "jac(y)(val)=" << std::endl << jac(val) << std::endl;
             std::cout << "hes(y)(val)=" << std::endl << hes(val) << std::endl;
+
+            MatFuncPtr<double> hes_jac=hes*jac;
+            std::cout << "hes_jac(y)(val)=" << std::endl << hes_jac(val) << std::endl;
+
+            std::cout << "hes_jac(y)[0,0]:" << std::endl << toString(hes_jac(0,0)) << std::endl;
+
         }
     }catch(std::string message){
         std::cerr << message << std::endl;
