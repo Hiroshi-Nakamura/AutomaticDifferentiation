@@ -165,16 +165,9 @@ namespace AutomaticDifferentiation {
         MatFuncPtr(const size_t _nRows, const size_t _nCols=1) : nRows(_nRows), nCols(_nCols), func_ptr(new FuncPtr<T>[nRows*nCols]) {}
         ~MatFuncPtr(){ delete[] func_ptr; }
         FuncPtr<T>& operator()(const size_t row, const size_t col=0){ return func_ptr[nCols*row+col]; }
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const T* x) const
-        {
-            Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> rtn(nRows,nCols);
-            for(size_t i=0; i<nRows; i++){
-                for(size_t j=0; j<nCols; j++){
-                    rtn(i,j)=(*func_ptr[nCols*i+j])(x);
-                }
-            }
-            return rtn;
-        }
+        const FuncPtr<T>& operator()(const size_t row, const size_t col=0) const { return func_ptr[nCols*row+col]; }
+        MatFuncPtr<T> operator*(const MatFuncPtr<T>& other) const;
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const T* x) const;
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const std::vector<T> x) const { return (*this)(x.data()); }
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const Eigen::Matrix<T,Eigen::Dynamic,1> x) const { return (*this)(x.data()); }
     };
@@ -496,5 +489,34 @@ inline std::vector<AutomaticDifferentiation::FuncPtr<T>> AutomaticDifferentiatio
     return rtn;
 }
 
+template<typename T>
+inline Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> AutomaticDifferentiation::MatFuncPtr<T>::operator()(const T* x) const
+{
+    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> rtn(nRows,nCols);
+    for(size_t i=0; i<nRows; i++){
+        for(size_t j=0; j<nCols; j++){
+            rtn(i,j)=(*(*this)(i,j))(x);
+//            rtn(i,j)=(*func_ptr[nCols*i+j])(x);
+        }
+    }
+    return rtn;
+}
+
+template<typename T>
+inline AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::MatFuncPtr<T>::operator*(const AutomaticDifferentiation::MatFuncPtr<T>& other) const{
+    assert(nCols==other.nRows);
+    MatFuncPtr<T> rtn(nRows,other.nCols);
+    for(size_t row=0; row<rtn.nRows; row++){
+        for(size_t col=0; col<rtn.nCols; col++){
+            rtn(row,col)=FuncPtr<T>(new Operator<T>(FuncType::PRODUCT,(*this)(row,0),other(0,col)));
+            for(size_t k=1; k<nCols; k++){
+                FuncPtr<T> tmp(new Operator<T>(FuncType::PRODUCT,(*this)(row,k),other(k,col)));
+                rtn(row,col)=FuncPtr<T>(new Operator<T>(FuncType::SUM,rtn(row,col),tmp));
+            }
+            simplification(rtn(row,col));
+        }
+    }
+    return rtn;
+}
 
 #endif // AUTOMATICDIFFERENTIATION_HPP_INCLUDED
