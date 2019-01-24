@@ -168,7 +168,8 @@ namespace AutomaticDifferentiation {
         const FuncPtr<T>& operator()(const size_t row, const size_t col=0) const { return func_ptr[nCols*row+col]; }
         MatFuncPtr<T> operator*(const MatFuncPtr<T>& other) const;
         MatFuncPtr<T> operator-(const MatFuncPtr<T>& other) const;
-        FuncPtr<T> norm() const;
+        FuncPtr<T> norm2() const;
+        MatFuncPtr<T> t() const;
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const T* x) const;
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const std::vector<T> x) const { return (*this)(x.data()); }
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const Eigen::Matrix<T,Eigen::Dynamic,1> x) const { return (*this)(x.data()); }
@@ -537,7 +538,7 @@ inline AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::MatFunc
 }
 
 template<typename T>
-inline AutomaticDifferentiation::FuncPtr<T> AutomaticDifferentiation::MatFuncPtr<T>::norm() const
+inline AutomaticDifferentiation::FuncPtr<T> AutomaticDifferentiation::MatFuncPtr<T>::norm2() const
 {
     FuncPtr<T> rtn(new Constant<T>(0.0));
     for(size_t row=0; row<nRows; row++){
@@ -547,6 +548,18 @@ inline AutomaticDifferentiation::FuncPtr<T> AutomaticDifferentiation::MatFuncPtr
         }
     }
     simplification(rtn);
+    return rtn;
+}
+
+template<typename T>
+inline AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::MatFuncPtr<T>::t() const
+{
+    MatFuncPtr<T> rtn(nCols,nRows);
+    for(size_t row=0; row<rtn.nRows; row++){
+        for(size_t col=0; col<rtn.nCols; col++){
+            rtn(row,col)=(*this)(col,row);
+        }
+    }
     return rtn;
 }
 
