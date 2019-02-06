@@ -61,8 +61,8 @@ int main(int argc, char** argv)
             std::cout << "hes_jac(y)[0,0]:" << std::endl << toString(hes_jac(0,0)) << std::endl;
             std::cout << "hes_jac(y)[1,0]:" << std::endl << toString(hes_jac(1,0)) << std::endl;
 
-            FuncPtr<double> hes_jac_norm=hes_jac.norm();
-            std::cout << "hes_jac_norm(y):" << std::endl << toString(hes_jac_norm) << std::endl;
+            FuncPtr<double> hes_jac_norm2=hes_jac.norm2();
+            std::cout << "hes_jac_norm2(y):" << std::endl << toString(hes_jac_norm2) << std::endl;
 
             MatFuncPtr<double> hes_jac_minus_jac=hes*jac-jac;
             std::cout << "hes_jac_minus_jac(y)(val)=" << std::endl << hes_jac_minus_jac(val) << std::endl;
