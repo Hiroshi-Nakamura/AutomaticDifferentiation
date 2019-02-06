@@ -14,9 +14,11 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
+					<Add option="-DUSE_MULTI_THREAD__" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="pthread" />
 				</Linker>
 			</Target>
 		</Build>
