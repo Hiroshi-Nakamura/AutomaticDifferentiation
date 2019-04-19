@@ -42,15 +42,15 @@ int main(int argc, char** argv)
             FuncPtr<double> y=cosh(x);
             const std::vector<double> val{1.0};
             std::cout << "y(val)=" << (*y)(val) << std::endl;
-            FuncPtr<double> dy=(*y).derivative();
+            FuncPtr<double> dy=(*y).derivative(0);
             std::cout << "dy(val)=" << (*dy)(val) << std::endl;
         }
         std::cout << std::endl;
         {
             using namespace AutomaticDifferentiation;
             FuncPtr<double> y=f(createVariables<double>(3));
-            MatFuncPtr<double> jac=jacobian(y,3);
-            MatFuncPtr<double> hes=hessian(y,3);
+            MatFuncPtr<double> jac=(*y).getJacobian(3);
+            MatFuncPtr<double> hes=jac.getJacobian(3); /// The jacobian vector of the jacobian of a function is a hessain matrix.
             const std::vector<double> val{10.0, 2.0, 5.0};
             std::cout << "y(val)=" << (*y)(val) << std::endl;
             std::cout << "jac(y)(val)=" << std::endl << jac(val) << std::endl;
