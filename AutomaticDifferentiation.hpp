@@ -36,13 +36,16 @@
 
 namespace AutomaticDifferentiation {
 
+    template<typename T> class MatFuncPtr;
+
     template<typename T>
     class Functor {
     public:
         virtual T operator()(const T* x) const =0; /// The same usage as a mathmatical function.
         T operator()(const std::vector<T>& x) const { return (*this)(x.data()); }; /// The same usage as a mathmatical function. NOT virtual.
         T operator()(const Eigen::Matrix<T,Eigen::Dynamic,1>& x) const { return (*this)(x.data()); }; /// The same usage as a mathmatical function. NOT virtual.
-        virtual std::shared_ptr<Functor<T>> derivative(size_t idx=0) const =0; /// Get derivative of this Functor. The return is also the derived class of Functor.
+        virtual std::shared_ptr<Functor<T>> derivative(size_t idx) const =0; /// Get derivative of this Functor. The return is also the derived class of Functor.
+        MatFuncPtr<T> getJacobian(size_t dim) const; /// Get Jacobian of this Functor. The return is class of MatFuncPtr.
     };
 
     template<typename T>
@@ -156,7 +159,7 @@ namespace AutomaticDifferentiation {
     inline FuncPtr<double> one(){ return FuncPtr<double>(new Constant<double>(1.0)); }
 
     ///
-    /// Matrix define for FuncPnr of Jacobian and Hessian
+    /// define Matrix of FuncPnr
     ///
     template<typename T>
     class MatFuncPtr {
@@ -176,37 +179,8 @@ namespace AutomaticDifferentiation {
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const T* x) const;
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const std::vector<T> x) const { return (*this)(x.data()); }
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> operator()(const Eigen::Matrix<T,Eigen::Dynamic,1> x) const { return (*this)(x.data()); }
+        MatFuncPtr<T> getJacobian(size_t dim) const;
     };
-
-    ///
-    /// utulity-- calculate Jacobian Functor
-    ///
-    template<typename T>
-    MatFuncPtr<T> jacobian(const FuncPtr<T>& f, const size_t dim)
-    {
-        MatFuncPtr<T> rtn(dim);
-        for(size_t i=0; i<dim; i++){
-            rtn(i,0)=(*f).derivative(i);
-        }
-        return rtn;
-    }
-
-    ///
-    /// utulity-- calculate Hessian Functor
-    ///
-    template<typename T>
-    MatFuncPtr<T> hessian(const FuncPtr<T>& f, const size_t dim)
-    {
-        MatFuncPtr<T> rtn(dim,dim);
-        MatFuncPtr<T> jac=jacobian(f,dim);
-        for(size_t i=0; i<dim; i++){
-            MatFuncPtr<T> jac_jac=jacobian(jac(i),dim);
-            for(size_t j=0; j<dim; j++){
-                rtn(i,j)=std::move(jac_jac(j));
-            }
-        }
-        return rtn;
-    }
 }
 
 template<typename T>
@@ -332,6 +306,15 @@ inline AutomaticDifferentiation::FuncPtr<T> AutomaticDifferentiation::Operator<T
     return rtn;
 }
 
+template<typename T>
+AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::Functor<T>::getJacobian(const size_t dim) const
+{
+    MatFuncPtr<T> rtn(dim);
+    for(size_t i=0; i<dim; i++){
+        rtn(i)=derivative(i);
+    }
+    return rtn;
+}
 
 ///
 /// utulity-- show Functor
@@ -588,6 +571,23 @@ inline AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::MatFunc
     for(size_t row=0; row<rtn.nRows; row++){
         for(size_t col=0; col<rtn.nCols; col++){
             rtn(row,col)=(*this)(col,row);
+        }
+    }
+    return rtn;
+}
+
+///
+/// utulity-- calculate Jacobian from MatFuncPtr
+///
+template<typename T>
+inline AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::MatFuncPtr<T>::getJacobian(size_t dim) const
+{
+    assert(nCols==1); /// this MatFuncPtr should be column vector!
+    MatFuncPtr<T> rtn(nRows,dim);
+    for(size_t i=0; i<nRows; i++){
+        MatFuncPtr<T> jac=(*((*this)(i))).getJacobian(dim);
+        for(size_t j=0; j<dim; j++){
+            rtn(i,j)=std::move(jac(j));
         }
     }
     return rtn;
