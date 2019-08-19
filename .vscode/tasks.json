@@ -9,6 +9,11 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "cpplint",
+            "type": "shell",
+            "command": "~/bin/cpplint.py --linelength=120 *.*",
         }
     ]
 }

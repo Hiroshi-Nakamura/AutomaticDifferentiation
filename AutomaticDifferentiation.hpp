@@ -1,5 +1,5 @@
-#ifndef AUTOMATICDIFFERENTIATION_HPP_INCLUDED
-#define AUTOMATICDIFFERENTIATION_HPP_INCLUDED
+/** Copyright 2018-2019 Hiroshi Nakamura */
+#pragma once
 
 #include <eigen3/Eigen/Core>
 #include <vector>
@@ -592,6 +592,3 @@ inline AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::MatFunc
     }
     return rtn;
 }
-
-
-#endif // AUTOMATICDIFFERENTIATION_HPP_INCLUDED
