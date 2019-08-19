@@ -5,9 +5,6 @@
 #include <vector>
 #include <memory>
 #include <cmath>
-#ifdef USE_MULTI_THREAD
-#include <thread>
-#endif // USE_MULTI_THREAD
 
 #define OPERATOR_FUNC_DEFINE(operant,operant_name) \
     template<typename T> \
@@ -482,25 +479,11 @@ template<typename T>
 inline Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> AutomaticDifferentiation::MatFuncPtr<T>::operator()(const T* x) const
 {
     Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> rtn(nRows,nCols);
-#ifdef USE_MULTI_THREAD
-    std::vector<std::thread> th;
-#endif // USE_MULTI_THREAD
     for(size_t i=0; i<nRows; i++){
-#ifdef USE_MULTI_THREAD
-        th.push_back(std::thread([&]{
-#endif // USE_MULTI_THREAD
         for(size_t j=0; j<nCols; j++){
             rtn(i,j)=(*(*this)(i,j))(x);
         }
-#ifdef USE_MULTI_THREAD
-        }));
-#endif // USE_MULTI_THREAD
     }
-#ifdef USE_MULTI_THREAD
-    for(auto &e: th){
-        e.join();
-    }
-#endif // USE_MULTI_THREAD
     return rtn;
 }
 
@@ -509,9 +492,6 @@ inline AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::MatFunc
 {
     assert(nCols==other.nRows);
     MatFuncPtr<T> rtn(nRows,other.nCols);
-#ifdef USE_MULTI_THREAD
-    std::vector<std::thread> th;
-#endif // USE_MULTI_THREAD
     for(size_t row=0; row<rtn.nRows; row++){
         for(size_t col=0; col<rtn.nCols; col++){
             rtn(row,col)=FuncPtr<T>(new Operator<T>(FuncType::PRODUCT,(*this)(row,0),other(0,col)));
@@ -519,20 +499,9 @@ inline AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::MatFunc
                 FuncPtr<T> tmp(new Operator<T>(FuncType::PRODUCT,(*this)(row,k),other(k,col)));
                 rtn(row,col)=FuncPtr<T>(new Operator<T>(FuncType::SUM,rtn(row,col),tmp));
             }
-#ifdef USE_MULTI_THREAD
-            th.push_back(std::thread([&]{
-#endif // USE_MULTI_THREAD
             simplification(rtn(row,col));
-#ifdef USE_MULTI_THREAD
-            }));
-#endif // USE_MULTI_THREAD
         }
     }
-#ifdef USE_MULTI_THREAD
-    for(auto &e: th){
-        e.join();
-    }
-#endif // USE_MULTI_THREAD
     return rtn;
 }
 
