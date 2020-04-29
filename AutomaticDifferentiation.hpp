@@ -1,4 +1,4 @@
-/** Copyright 2018-2019 Hiroshi Nakamura */
+/** Copyright 2018-2020 Hiroshi Nakamura */
 #pragma once
 
 #include <eigen3/Eigen/Core>
@@ -120,7 +120,7 @@ namespace AutomaticDifferentiation {
 
 
     ///
-    /// utulity-- show Functor
+    /// utility-- show Functor
     ///
     template<typename T>
     std::string toString(const FuncPtr<T>& functor);
@@ -132,13 +132,13 @@ namespace AutomaticDifferentiation {
     void simplification(FuncPtr<T>& functor);
 
     ///
-    /// utulity-- create variables
+    /// utility-- create variables
     ///
     template<typename T>
     std::vector<FuncPtr<T>> createVariables(size_t dim);
 
     ///
-    /// utulity-- create zero constant value
+    /// utility-- create zero constant value
     ///
     template<typename T>
     T zero(){ return T(0.0); }
@@ -147,7 +147,7 @@ namespace AutomaticDifferentiation {
     inline FuncPtr<double> zero(){ return FuncPtr<double>(new Constant<double>(0.0)); }
 
     ///
-    /// utulity-- create one constant value
+    /// utility-- create one constant value
     ///
     template<typename T>
     T one(){ return T(1.0); }
@@ -314,7 +314,7 @@ AutomaticDifferentiation::MatFuncPtr<T> AutomaticDifferentiation::Functor<T>::ge
 }
 
 ///
-/// utulity-- show Functor
+/// utility-- show Functor
 ///
 template<typename T>
 inline std::string AutomaticDifferentiation::toString(const FuncPtr<T>& functor)
@@ -400,7 +400,7 @@ inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
         simplification(op->left);
         if(op->right!=nullptr) simplification(op->right);
 
-        /// conbination of sum and minus -->> difference
+        /// combination of sum and minus -->> difference
         if(op->func_type==FuncType::SUM){
             std::shared_ptr<Operator<T>> right=std::dynamic_pointer_cast<Operator<T>>(op->right);
             if(right!=nullptr && right->func_type==FuncType::MINUS){
@@ -409,7 +409,7 @@ inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
             }
         }
 
-        /// conbination of difference and minus -->> sum
+        /// combination of difference and minus -->> sum
         if(op->func_type==FuncType::DIFFERENCE){
             std::shared_ptr<Operator<T>> right=std::dynamic_pointer_cast<Operator<T>>(op->right);
             if(right!=nullptr && right->func_type==FuncType::MINUS){
@@ -463,7 +463,7 @@ inline void AutomaticDifferentiation::simplification(FuncPtr<T>& functor)
 }
 
 ///
-/// utulity-- create variables
+/// utility-- create variables
 ///
 template<typename T>
 inline std::vector<AutomaticDifferentiation::FuncPtr<T>> AutomaticDifferentiation::createVariables(size_t dim)

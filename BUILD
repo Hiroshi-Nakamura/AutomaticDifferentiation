@@ -1,5 +1,5 @@
 cc_binary(
-  name = "AutomaticDifferentialionTest",
+  name = "AutomaticDifferentiationTest",
     srcs = [
       "AutomaticDifferentiationTest.cpp",
       "AutomaticDifferentiation.hpp",

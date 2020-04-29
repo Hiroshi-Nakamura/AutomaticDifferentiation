@@ -6,21 +6,21 @@ The sample of usages are shown in "AutomaticDifferentiationTest.cpp".
 
 Generally a Functor has an `operator()`.
 Of course, `AutomaticDifferentiation::Functor` has the `operator()`,
-whose argument is `std::array` standing for a mathmatical variable vector x.
+whose argument is `std::array` standing for a mathematical variable vector x.
 `AutomaticDifferentiation::Functor` derives 3 sub classes, i.e. Constant, Variable and Operator class.
 `AutomaticDifferentiation::Constant::operator(x)` always returns a constant value for any x.
 `AutomaticDifferentiation::Variable::operator(x)` returns a value due to vector x.
 `AutomaticDifferentiation::Operator::operator(x)` returns a value due to its operation type, SUM or PRODUCT or so on, 
 and due to the operated Functor(s).
 For example, in the SUM operator case, 
-the `operator(x)` returns the sum of the left and the right Functor's `operator(x)` outputs,
+the `operator(x)` returns the sum of the left and the right Functor `operator(x)` outputs,
 i.e. returns **LEFT(x)+RIGHT(x)**, where **LEFT** is the left operated functor, **RIGHT** is the right one.
 
 The above are the basics of `AutomaticDifferentiation::Functor`.
-With this preperation, we can easily calculate the derivative Functor.
+With this preparation, we can easily calculate the derivative Functor.
 The derivative of `AutomaticDifferentiation::Constant` is always `AutomaticDifferentiation::Constant(0.0)`.
 The derivative of `AutomaticDifferentiation::Variable` will be `AutomaticDifferentiation::Constant(1.0)` when derived by itself,
-otherwise (derived by other varable) it will be `AutomaticDifferentiation::Constant(0.0)`.
+otherwise (derived by other variable) it will be `AutomaticDifferentiation::Constant(0.0)`.
 The derivative of `AutomaticDifferentiation::Operator` will be calculated by **chain rule**.
 For example, in the PRODUCT operator case: 
 
@@ -47,7 +47,7 @@ In the case of Constant, type:
 
     AutomaticDifferentiation::FuncPtr c(new AutomaticDifferentiation::Constant(3.0));
 
-The argument of Constructor of Variable and Constant are quitely different,
+The argument of Constructor of Variable and Constant are quite different,
 the formar (size_t) means the index of vector x, the latter (usually "double") means the constant value itself.
 Usually the Operator is not created explicitly, but by typing the equation like the bellow, you can take Operator instance y.
 
@@ -56,7 +56,7 @@ Usually the Operator is not created explicitly, but by typing the equation like 
 
 
 The Above are the fundamental part of this library. Adding this, some utilities are prepared.
-It is nanutal that the argument of a mathmatical function is much long vector.
+It is natural that the argument of a mathematical function is much long vector.
 
     AutomaticDifferentiation::FuncPtr x_0(new AutomaticDifferentiation::Variable(0));
     AutomaticDifferentiation::FuncPtr x_1(new AutomaticDifferentiation::Variable(1));
@@ -71,7 +71,7 @@ By just typing the below, you can take a Functor y standing for function f().
 
 Jacobian and Hessian are also popular.
 The functions `AutomaticDifferentiation::jacobian()` and `AutomaticDifferentiation::hessian()` are prepared.
-Then you can obtain them by typing the below (`dim` is the dimention of variables):
+Then you can obtain them by typing the below (`dim` is the dimension of variables):
 
     auto jac=AutomaticDifferentiation::jacobian(y,dim);
     auto hes=AutomaticDifferentiation::hessian(y,dim);
